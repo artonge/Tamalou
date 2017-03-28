@@ -26,15 +26,15 @@ symptoms --> [Tamalou]
 
 [Tamalou] --> {
 
-  sicknesses {
-    name
-    drugs
-  }
+  sicknesses [
+    { name [drugs] }
+    ...
+  ]
 
-  drugs {
-    name
-    drugs
-  }
+  drugs [
+    { name [drugs] }
+    ...
+  ]
 }
 ```
 

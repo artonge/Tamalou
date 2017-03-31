@@ -4,5 +4,11 @@ import "testing"
 
 func TestCouchExample(t *testing.T) {
 
-	CouchExample()
+	// CouchExample()
+}
+
+func TestMysqlConnection(t *testing.T) {
+
+	MysqlConnection()
+
 }

@@ -2,7 +2,7 @@
 go get github.com/artonge/Tamalou
 
 # Dependencies
-- [mysql - *mySQL drivers*](https://godoc.org/database/sql/driver#Conn)
+- [mysql - *mySQL drivers*](https://godoc.org/github.com/go-sql-driver/mysql)
 - [sqlite3 - *SQLite drivers*](https://godoc.org/github.com/mattn/go-sqlite3)
 - [couchdb - *couchDB drivers*](https://godoc.org/github.com/rhinoman/couchdb-go)
 - [bleve - *indexing*](github.com/blevesearch/bleve)

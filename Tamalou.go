@@ -3,13 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
-	"time"
 
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/blevesearch/bleve"
-	couchdb "github.com/rhinoman/couchdb-go"
 )
 
 func main() {
@@ -89,27 +87,4 @@ func mgoExemple() {
 type testDocument struct {
 	Title string
 	Note  string
-}
-
-// CouchExample -
-func CouchExample() {
-	var timeout = time.Duration(500 * time.Millisecond)
-	conn, err := couchdb.NewConnection("http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase", 80, timeout)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	auth := couchdb.BasicAuth{Username: "user", Password: "password"}
-	db := conn.SelectDB("myDatabase", &auth)
-
-	fmt.Println(db)
-
-	theDoc := testDocument{
-		Title: "My Document",
-		Note:  "This is a note",
-	}
-
-	fmt.Println(theDoc)
-
 }

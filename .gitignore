@@ -24,3 +24,4 @@ _testmain.go
 *.prof
 
 datas/*
+omim-search.bleve/*

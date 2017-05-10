@@ -16,6 +16,7 @@ type HPOStruct struct {
 
 var db *sql.DB
 
+// Init DB connection to HPO SQLite DB
 func init() {
 	var err error
 	db, err = sql.Open("sqlite3", "hpo_annotations.sqlite")

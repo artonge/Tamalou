@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestCouchExample(t *testing.T) {
 	// CouchExample()
@@ -13,4 +15,8 @@ func TestMysqlConnection(t *testing.T) {
 
 func TestCouchDBConnection(t *testing.T) {
 	//CouchDBConnection()
+}
+
+func TestSQLiteConnection(t *testing.T) {
+	SQLiteConnection()
 }

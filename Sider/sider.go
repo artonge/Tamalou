@@ -89,7 +89,7 @@ func QueryMeddraAllSe(query map[string]interface{}) ([]*MeddraAllSe, error) {
 	return results, nil
 }
 
-func QueryMeddraFrq(query map[string]interface{}) ([]*MeddraFreq, error) {
+func QueryMeddraFreq(query map[string]interface{}) ([]*MeddraFreq, error) {
 	fullQuery := "SELECT * FROM meddra_freq WHERE " + TamalouQuery.BuildSQLQuery(query, "")
 
 	// Make the query

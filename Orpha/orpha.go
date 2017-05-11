@@ -1,52 +1,17 @@
-package main
+package orpha
 
 import (
+	"fmt"
 	"log"
 	"time"
 
 	couchdb "github.com/rhinoman/couchdb-go"
 )
 
-type (
-	nameStruct struct {
-		Lang string `json:"lang"`
-		Text string `json:"text"`
-	}
-	disease struct {
-		ID          string     `json:"id"`
-		OrphaNumber int        `json:"OrphaNumber"`
-		Name        nameStruct `json:"Name"`
-	}
-	clinicalSign struct {
-		ID   string     `json:"id"`
-		Name nameStruct `json:"Name"`
-	}
-	freqStruct struct {
-		ID   string     `json:"id"`
-		Name nameStruct `json:"Name"`
-	}
-	dataStruct struct {
-		SignFreq freqStruct `json:"signFreq"`
-	}
-	dANDcs struct {
-		Disease      disease      `json:"disease"`
-		ClinicalSign clinicalSign `json:"clinicalSign"`
-		Data         dataStruct   `json:"data"`
-	}
-	ViewResponse struct {
-		TotalRows int          `json:"total_rows"`
-		Offset    int          `json:"offset"`
-		Rows      []ViewResult `json:"rows,omitempty"`
-	}
-	ViewResult struct {
-		Id    string `json:"id"`
-		Key   string `json:"key"`
-		Value dANDcs `json:"value"`
-	}
-)
+var DB *couchdb.Database
 
-func CouchDBConnection() {
-
+// Init CouchDB connection
+func init() {
 	conn, err := couchdb.NewConnection(
 		"couchdb.telecomnancy.univ-lorraine.fr",
 		80,
@@ -54,21 +19,21 @@ func CouchDBConnection() {
 	)
 
 	if err != nil {
-		log.Fatal("Error1: ", err)
+		log.Fatal("Error in Orpha DB init: ", err)
 	}
 
-	DB := conn.SelectDB("orphadatabase", nil)
+	DB = conn.SelectDB("orphadatabase", nil)
+}
 
-	if err != nil {
-		log.Fatal("Error2: ", err)
-	}
+func Query(query map[string]interface{}) ([]ViewResult, error) {
 
 	results := ViewResponse{}
-	// results := make(map[string]interface{})
 
-	err = DB.GetView("clinicalsigns", "GetDiseaseByClinicalSign", &results, nil)
+	err := DB.GetView("clinicalsigns", "GetDiseaseByClinicalSign", &results, nil)
 
 	if err != nil {
-		log.Fatal("Error3: ", err)
+		return nil, fmt.Errorf("Error while Querying Orpha: ", err)
 	}
+
+	return results.Rows, err
 }

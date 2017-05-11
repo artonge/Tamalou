@@ -4,10 +4,21 @@ import (
 	"fmt"
 
 	"github.com/blevesearch/bleve"
+	"github.com/mkideal/cli"
 )
 
-func main() {
+type argT struct {
+	cli.Helper
+	Or  []string `cli:"or"  usage:"or logical operator"`
+	And []string `cli:"and" usage:"and logical operator"`
+}
 
+func main() {
+	cli.Run(new(argT), func(ctx *cli.Context) error {
+		argv := ctx.Argv().(*argT)
+		ctx.String("or=%v, and=%v\n", argv.Or, argv.And)
+		return nil
+	})
 }
 
 // Bleve example

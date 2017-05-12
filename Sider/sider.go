@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/artonge/Tamalou/TamalouQuery"
+	"github.com/artonge/Tamalou/Queries"
 	_ "github.com/go-sql-driver/mysql"
 )
 

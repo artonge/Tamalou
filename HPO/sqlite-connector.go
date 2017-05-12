@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/artonge/Tamalou/TamalouQuery"
+	"github.com/artonge/Tamalou/Queries"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -33,7 +33,7 @@ func HPOQuery(query Queries.DBQuery) ([]*HPOSQLiteStruct, error) {
 	rows, err := db.Query(fullQuery)
 
 	if err != nil {
-		return nil, fmt.Errorf("Error in HPOQuery when querying: ", err)
+		return nil, fmt.Errorf("Error in HPOQuery when querying: %v", err)
 	}
 
 	// Prepare the resuts array

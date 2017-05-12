@@ -6,23 +6,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/artonge/Tamalou/TamalouQuery"
+	"github.com/artonge/Tamalou/Queries"
 )
 
 var (
-	keywords = []string{
-		"id",
-		"alt_id",
-		"name",
-		"def",
-		"synonyme",
-		"xref",
-		"is_a",
-	}
-
-	f       *os.File
-	scanner *bufio.Scanner
-	term    *HPOOBOStruct
+	f    *os.File
+	term *HPOOBOStruct
 )
 
 // Open a connection to the hp.obo file
@@ -41,23 +30,16 @@ func init() {
 //    - If the query match, add it to the results
 func HPOOBOQuery(query Queries.DBQuery) ([]*HPOOBOStruct, error) {
 	// Create a new Scanner
-	scanner = bufio.NewScanner(f)
-
-	// Ignore the first part of the file
-	for scanner.Scan() {
-		if scanner.Text() == "" {
-			break
-		}
-	}
+	scanner := bufio.NewScanner(f)
 
 	// Init the results array
 	results := make([]*HPOOBOStruct, 0, 100)
 
 	// Loop through the Terms
 	for {
-		term, err := nextTerm()
+		term, err := nextTerm(scanner)
 		if err != nil {
-			return nil, fmt.Errorf("Error while parsing obo file\n	==> ", err)
+			return nil, fmt.Errorf("Error while parsing obo file\n	==> %v", err)
 		}
 		// End of the file
 		if term == nil {
@@ -156,8 +138,16 @@ func termMatchesQuery(term *HPOOBOStruct, query Queries.DBQuery, queryType strin
 }
 
 // Return the next term
-func nextTerm() (*HPOOBOStruct, error) {
+func nextTerm(scanner *bufio.Scanner) (*HPOOBOStruct, error) {
 
+	// Used to ignore the first part of the file
+	for scanner.Scan() {
+		if scanner.Text() == "" {
+			break
+		}
+	}
+
+	// Init the new term
 	term := new(HPOOBOStruct)
 
 	// Continue the file parsing from the last position

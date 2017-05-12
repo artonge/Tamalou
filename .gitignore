@@ -25,3 +25,4 @@ _testmain.go
 
 datas/*
 omim-search.bleve/*
+HPO/obo-search.bleve

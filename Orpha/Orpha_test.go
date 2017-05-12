@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/artonge/Tamalou/TamalouQuery"
+	"github.com/artonge/Tamalou/Queries"
 )
 
 func TestQuery(t *testing.T) {

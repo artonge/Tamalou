@@ -41,10 +41,10 @@ func Index() bleve.Index {
 }
 
 func indexOmimBatch(i bleve.Index) error {
-	dicCsv := ParseOmimCsv()
-	ch := make(chan OmimStruct)
+	dicCsv := ParseOmimCsv()    // Load all csv file in memory (dictionary)
+	ch := make(chan OmimStruct) // Chanel for multithreading
 	startTime := time.Now()
-	go ParseOmim(ch, dicCsv)
+	go ParseOmim(ch, dicCsv) // Parse OMIM to complete csv dictionary
 	count := 0
 	batch := i.NewBatch()
 	batchCount := 0

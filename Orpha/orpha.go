@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/artonge/Tamalou/TamalouQuery"
+	"github.com/artonge/Tamalou/Queries"
 	couchdb "github.com/rhinoman/couchdb-go"
 )
 

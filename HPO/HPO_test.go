@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/artonge/Tamalou/TamalouQuery"
+	"github.com/artonge/Tamalou/Queries"
+	"github.com/blevesearch/bleve"
 )
 
 func TestSQLiteQuery(t *testing.T) {
@@ -72,4 +73,19 @@ func TestOBOQuery(t *testing.T) {
 		fmt.Println(results, err)
 		t.Fail()
 	}
+}
+
+func TestIndexOBO(t *testing.T) {
+
+	index, err := IndexOBO()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	query := bleve.NewMatchQuery("Root of all terms in the Human Phenotype Ontology.")
+	search := bleve.NewSearchRequest(query)
+	searchResults, err := index.Search(search)
+
+	fmt.Println(searchResults)
 }

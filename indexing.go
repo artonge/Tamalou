@@ -3,16 +3,13 @@ package main
 import (
 	"flag"
 	"log"
+	"time"
 
 	"github.com/blevesearch/bleve"
 )
 
 var IndexPath = flag.String("index", "omim-search.bleve", "index path")
 
-// TODO: soit trouver le bon analyzer ou créer un analyzer
-
-// voir mapping.go de beer-search
-// permet d'analiser le texte
 // func buildIndexMapping() (mapping.IndexMapping, error) {
 //
 // 	textFieldMapping := bleve.NewTextFieldMapping()
@@ -34,7 +31,8 @@ func Index() bleve.Index {
 		if err != nil {
 			log.Fatal(err)
 		}
-		err = indexOmim(omimIndex)
+		//err = indexOmimWithoutBatch(omimIndex)
+		err = indexOmimBatch(omimIndex)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -42,12 +40,57 @@ func Index() bleve.Index {
 	return omimIndex
 }
 
-func indexOmim(i bleve.Index) error {
+func indexOmimBatch(i bleve.Index) error {
+	dicCsv := ParseOmimCsv()
 	ch := make(chan OmimStruct)
-	go ParseOmim(ch)
+	startTime := time.Now()
+	go ParseOmim(ch, dicCsv)
+	count := 0
+	batch := i.NewBatch()
+	batchCount := 0
+	batchSize := 100
 	for doc := range ch {
-		i.Index(doc.fieldNumber, doc)
+		batch.Index(doc.FieldNumber, doc)
+		batchCount++
+		count++
+		if batchCount >= batchSize {
+			err := i.Batch(batch)
+			if err != nil {
+				return err
+			}
+			indexDuration := time.Since(startTime)
+			indexDurationSeconds := float64(indexDuration) / float64(time.Second)
+			timePerDoc := float64(indexDuration) / float64(count)
+			log.Printf("Indexed %d documents, in %.2fs (average %.2fms/doc)", count, indexDurationSeconds, timePerDoc/float64(time.Millisecond))
+			batch = i.NewBatch()
+			batchCount = 0
+		}
+	}
+	if batchCount > 0 {
+		err := i.Batch(batch)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	return nil
 }
+
+// func indexOmimWithoutBatch(i bleve.Index) error {
+// 	ch := make(chan OmimStruct)
+// 	startTime := time.Now()
+// 	go ParseOmim(ch)
+// 	count := 0
+// 	for doc := range ch {
+// 		i.Index(doc.FieldNumber, doc)
+// 		count++
+// 		if count%10 == 0 {
+// 			indexDuration := time.Since(startTime)
+// 			indexDurationSeconds := float64(indexDuration) / float64(time.Second)
+// 			timePerDoc := float64(indexDuration) / float64(count)
+// 			log.Printf("Indexed %d documents, in %.2fs (average %.2fms/doc)", count, indexDurationSeconds, timePerDoc/float64(time.Millisecond))
+// 		}
+// 	}
+//
+// 	return nil
+// }

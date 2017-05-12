@@ -20,8 +20,8 @@ func init() {
 	}
 }
 
-func QueryMeddra(query map[string]interface{}) ([]*Meddra, error) {
-	fullQuery := "SELECT * FROM meddra WHERE " + TamalouQuery.BuildSQLQuery(query, "")
+func QueryMeddra(query Queries.DBQuery) ([]*Meddra, error) {
+	fullQuery := "SELECT * FROM meddra WHERE " + Queries.BuildSQLQuery(query, "")
 
 	// Make the query
 	rows, err := db.Query(fullQuery)
@@ -43,8 +43,8 @@ func QueryMeddra(query map[string]interface{}) ([]*Meddra, error) {
 	return results, nil
 }
 
-func QueryMeddraAllIndications(query map[string]interface{}) ([]*MeddraAllIndications, error) {
-	fullQuery := "SELECT * FROM meddra_all_indications WHERE " + TamalouQuery.BuildSQLQuery(query, "")
+func QueryMeddraAllIndications(query Queries.DBQuery) ([]*MeddraAllIndications, error) {
+	fullQuery := "SELECT * FROM meddra_all_indications WHERE " + Queries.BuildSQLQuery(query, "")
 
 	// Make the query
 	rows, err := db.Query(fullQuery)
@@ -66,8 +66,8 @@ func QueryMeddraAllIndications(query map[string]interface{}) ([]*MeddraAllIndica
 	return results, nil
 }
 
-func QueryMeddraAllSe(query map[string]interface{}) ([]*MeddraAllSe, error) {
-	fullQuery := "SELECT * FROM meddra_all_se WHERE " + TamalouQuery.BuildSQLQuery(query, "")
+func QueryMeddraAllSe(query Queries.DBQuery) ([]*MeddraAllSe, error) {
+	fullQuery := "SELECT * FROM meddra_all_se WHERE " + Queries.BuildSQLQuery(query, "")
 
 	// Make the query
 	rows, err := db.Query(fullQuery)
@@ -89,8 +89,8 @@ func QueryMeddraAllSe(query map[string]interface{}) ([]*MeddraAllSe, error) {
 	return results, nil
 }
 
-func QueryMeddraFreq(query map[string]interface{}) ([]*MeddraFreq, error) {
-	fullQuery := "SELECT * FROM meddra_freq WHERE " + TamalouQuery.BuildSQLQuery(query, "")
+func QueryMeddraFreq(query Queries.DBQuery) ([]*MeddraFreq, error) {
+	fullQuery := "SELECT * FROM meddra_freq WHERE " + Queries.BuildSQLQuery(query, "")
 
 	// Make the query
 	rows, err := db.Query(fullQuery)

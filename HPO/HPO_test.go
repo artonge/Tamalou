@@ -3,11 +3,13 @@ package HPO
 import (
 	"fmt"
 	"testing"
+
+	"github.com/artonge/Tamalou/TamalouQuery"
 )
 
 func TestSQLiteQuery(t *testing.T) {
 	// Fetch all
-	hpoArray, err := HPOQuery(map[string]interface{}{
+	hpoArray, err := HPOQuery(Queries.DBQuery{
 		"1": "1",
 	})
 	if err != nil {
@@ -16,7 +18,7 @@ func TestSQLiteQuery(t *testing.T) {
 	}
 
 	// Fetch none - wrong query
-	hpoArray, err = HPOQuery(map[string]interface{}{
+	hpoArray, err = HPOQuery(Queries.DBQuery{
 		"fail": "success",
 	})
 	if err == nil {
@@ -25,8 +27,8 @@ func TestSQLiteQuery(t *testing.T) {
 	}
 
 	// Fetch some
-	hpoArray, err = HPOQuery(map[string]interface{}{
-		"and": map[string]interface{}{
+	hpoArray, err = HPOQuery(Queries.DBQuery{
+		"and": Queries.DBQuery{
 			"disease_id": "1",
 			"1":          1,
 		},
@@ -39,7 +41,7 @@ func TestSQLiteQuery(t *testing.T) {
 
 func TestOBOQuery(t *testing.T) {
 	// Find one
-	results, err := HPOOBOQuery(map[string]interface{}{
+	results, err := HPOOBOQuery(Queries.DBQuery{
 		"id": "HP:0000001",
 	})
 
@@ -50,7 +52,7 @@ func TestOBOQuery(t *testing.T) {
 	}
 
 	// Find none
-	results, err = HPOOBOQuery(map[string]interface{}{
+	results, err = HPOOBOQuery(Queries.DBQuery{
 		"id": "none",
 	})
 
@@ -61,7 +63,7 @@ func TestOBOQuery(t *testing.T) {
 	}
 
 	// Fail query
-	results, err = HPOOBOQuery(map[string]interface{}{
+	results, err = HPOOBOQuery(Queries.DBQuery{
 		"id": 1,
 	})
 

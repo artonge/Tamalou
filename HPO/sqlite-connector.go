@@ -26,8 +26,8 @@ func init() {
 //                          'disease_db', 'disease_id', 'disease_label', 'sign_id'
 // @return results : Array fill with HPOSQLiteStruct
 // @return error : Contains an error if one occurs
-func HPOQuery(query map[string]interface{}) ([]*HPOSQLiteStruct, error) {
-	fullQuery := "SELECT disease_db, disease_id, disease_label, sign_id FROM phenotype_annotation WHERE " + TamalouQuery.BuildSQLQuery(query, "")
+func HPOQuery(query Queries.DBQuery) ([]*HPOSQLiteStruct, error) {
+	fullQuery := "SELECT disease_db, disease_id, disease_label, sign_id FROM phenotype_annotation WHERE " + Queries.BuildSQLQuery(query, "")
 
 	// Make the query
 	rows, err := db.Query(fullQuery)

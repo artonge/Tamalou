@@ -1,8 +1,8 @@
-package TamalouQuery
+package Queries
 
 import "strconv"
 
-func BuildSQLQuery(query map[string]interface{}, queryType interface{}) string {
+func BuildSQLQuery(query DBQuery, queryType interface{}) string {
 	var (
 		fullQuery string
 		operand   string
@@ -22,7 +22,7 @@ func BuildSQLQuery(query map[string]interface{}, queryType interface{}) string {
 	for key, value := range query {
 		switch key {
 		case "and", "or":
-			fullQuery += "(" + BuildSQLQuery(value.(map[string]interface{}), key) + ")"
+			fullQuery += "(" + BuildSQLQuery(value.(DBQuery), key) + ")"
 		default:
 			switch value.(type) {
 			case string:

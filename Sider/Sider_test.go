@@ -3,11 +3,13 @@ package sider
 import (
 	"fmt"
 	"testing"
+
+	"github.com/artonge/Tamalou/TamalouQuery"
 )
 
 func TestQueryMeddra(t *testing.T) {
 
-	results, err := QueryMeddra(map[string]interface{}{
+	results, err := QueryMeddra(Queries.DBQuery{
 		"1": 1,
 	})
 
@@ -19,7 +21,7 @@ func TestQueryMeddra(t *testing.T) {
 
 func TestQueryMeddraAllIndications(t *testing.T) {
 
-	results, err := QueryMeddraAllIndications(map[string]interface{}{
+	results, err := QueryMeddraAllIndications(Queries.DBQuery{
 		"1": 1,
 	})
 
@@ -31,7 +33,7 @@ func TestQueryMeddraAllIndications(t *testing.T) {
 
 func TestQueryMeddraAllSe(t *testing.T) {
 
-	results, err := QueryMeddraAllSe(map[string]interface{}{
+	results, err := QueryMeddraAllSe(Queries.DBQuery{
 		"1": 1,
 	})
 
@@ -43,7 +45,7 @@ func TestQueryMeddraAllSe(t *testing.T) {
 
 func TestQueryMeddraFreq(t *testing.T) {
 
-	results, err := QueryMeddraFreq(map[string]interface{}{
+	results, err := QueryMeddraFreq(Queries.DBQuery{
 		"1": 1,
 	})
 

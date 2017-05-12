@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/artonge/Tamalou/TamalouQuery"
 	couchdb "github.com/rhinoman/couchdb-go"
 )
 
@@ -25,7 +26,7 @@ func init() {
 	DB = conn.SelectDB("orphadatabase", nil)
 }
 
-func Query(query map[string]interface{}) ([]ViewResult, error) {
+func Query(query Queries.DBQuery) ([]ViewResult, error) {
 
 	results := ViewResponse{}
 

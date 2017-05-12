@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/artonge/Tamalou/TamalouQuery"
 )
 
 var (
@@ -37,7 +39,7 @@ func init() {
 //  - Parse the hp.obo file
 //  - For each term, submit it to the Query
 //    - If the query match, add it to the results
-func HPOOBOQuery(query map[string]interface{}) ([]*HPOOBOStruct, error) {
+func HPOOBOQuery(query Queries.DBQuery) ([]*HPOOBOStruct, error) {
 	// Create a new Scanner
 	scanner = bufio.NewScanner(f)
 
@@ -72,7 +74,7 @@ func HPOOBOQuery(query map[string]interface{}) ([]*HPOOBOStruct, error) {
 }
 
 // Test a Term against a query
-func termMatchesQuery(term *HPOOBOStruct, query map[string]interface{}, queryType string) bool {
+func termMatchesQuery(term *HPOOBOStruct, query Queries.DBQuery, queryType string) bool {
 	var answers []bool
 
 	// For each elements of the query
@@ -82,7 +84,7 @@ func termMatchesQuery(term *HPOOBOStruct, query map[string]interface{}, queryTyp
 			// Recursive call for 'or' and 'and' nodes
 			answers = append(
 				answers,
-				termMatchesQuery(term, value.(map[string]interface{}), key),
+				termMatchesQuery(term, value.(Queries.DBQuery), key),
 			)
 		default:
 			// Normal comparison for others

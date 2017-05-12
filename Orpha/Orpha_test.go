@@ -3,11 +3,13 @@ package orpha
 import (
 	"fmt"
 	"testing"
+
+	"github.com/artonge/Tamalou/TamalouQuery"
 )
 
 func TestQuery(t *testing.T) {
 
-	results, err := Query(map[string]interface{}{})
+	results, err := Query(Queries.DBQuery{})
 
 	if err != nil {
 		fmt.Println("Error in Orpha TestQuery: \n   ==> ", err, "\n ==> ", results)

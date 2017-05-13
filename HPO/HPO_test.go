@@ -40,52 +40,16 @@ func TestSQLiteQuery(t *testing.T) {
 	}
 }
 
-func TestOBOQuery(t *testing.T) {
-	// Find one
-	results, err := HPOOBOQuery(Queries.DBQuery{
-		"id": "HP:0000001",
-	})
-
-	if err != nil || len(results) != 1 {
-		fmt.Println("Unit Test Error (id=HP:0000001): \n	==> ", err, "\n	==> ", results)
-		fmt.Println(results, err)
-		t.Fail()
-	}
-
-	// Find none
-	results, err = HPOOBOQuery(Queries.DBQuery{
-		"id": "none",
-	})
-
-	if err != nil || len(results) != 0 {
-		fmt.Println("Unit Test Error (id=HP:0000001): \n	==> ", err, "\n	==> ", results)
-		fmt.Println(results, err)
-		t.Fail()
-	}
-
-	// Fail query
-	results, err = HPOOBOQuery(Queries.DBQuery{
-		"id": 1,
-	})
-
-	if err != nil || len(results) != 0 {
-		fmt.Println("Unit Test Error (id=HP:0000001): \n	==> ", err, "\n	==> ", results)
-		fmt.Println(results, err)
-		t.Fail()
-	}
-}
-
 func TestIndexOBO(t *testing.T) {
-
-	index, err := IndexOBO()
+	fmt.Println(index.Fields())
+	fmt.Println(index.Document("HP:0000003"))
+	query := bleve.NewMatchQuery("+AltIDs:HP:0000003 -AltIDs:mustnot")
+	search := bleve.NewSearchRequest(query)
+	searchResults, err := index.Search(search)
 
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	query := bleve.NewMatchQuery("Root of all terms in the Human Phenotype Ontology.")
-	search := bleve.NewSearchRequest(query)
-	searchResults, err := index.Search(search)
 
 	fmt.Println(searchResults)
 }

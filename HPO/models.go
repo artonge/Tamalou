@@ -18,3 +18,7 @@ type HPOOBOStruct struct {
 	IsA        string
 	Obsolete   bool
 }
+
+func (obo *HPOOBOStruct) GetID() string {
+	return obo.ID
+}

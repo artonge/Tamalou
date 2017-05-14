@@ -18,7 +18,10 @@ func main() {
 		if err != nil {
 			ctx.String("Error:\n	%v\n", err)
 		} else {
-			ctx.String("Results:\n%v\n", results)
+			ctx.String("Results (%v): \n", len(results))
+			for _, r := range results {
+				ctx.String("	- %v\n", r.Value.Disease.Name.Text)
+			}
 		}
 		return nil
 	})

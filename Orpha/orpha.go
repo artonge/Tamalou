@@ -101,7 +101,6 @@ func getDiseaseByClinicalSign(clinicalSign string) ([]ViewResult, error) {
 		return results.Rows, fmt.Errorf("Error while Querying Orpha:\n	==>  %v", err)
 	}
 
-	fmt.Println(len(results.Rows))
 	return results.Rows, err
 }
 

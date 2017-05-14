@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-
+	orpha "github.com/artonge/Tamalou/Orpha"
 	"github.com/artonge/Tamalou/Queries"
 	"github.com/mkideal/cli"
 )
@@ -15,7 +14,12 @@ type argT struct {
 func main() {
 	cli.Run(new(argT), func(ctx *cli.Context) error {
 		argv := ctx.Argv().(*argT)
-		ctx.String("query=%v\n", fmt.Sprint(Queries.ParseQuery(argv.Query)))
+		results, err := orpha.Query(Queries.ParseQuery(argv.Query))
+		if err != nil {
+			ctx.String("Error:\n	%v\n", err)
+		} else {
+			ctx.String("Results:\n%v\n", results)
+		}
 		return nil
 	})
 }

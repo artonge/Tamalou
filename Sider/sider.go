@@ -49,7 +49,7 @@ func QueryMeddraAllIndications(query Queries.DBQuery) ([]*MeddraAllIndications, 
 	// Make the query
 	rows, err := db.Query(fullQuery)
 	if err != nil {
-		return nil, fmt.Errorf("Error while querying sider: ", err)
+		return nil, fmt.Errorf("Error while querying sider: %v", err)
 	}
 	defer rows.Close()
 
@@ -72,7 +72,7 @@ func QueryMeddraAllSe(query Queries.DBQuery) ([]*MeddraAllSe, error) {
 	// Make the query
 	rows, err := db.Query(fullQuery)
 	if err != nil {
-		return nil, fmt.Errorf("Error while querying sider (meddra_all_se): ", err)
+		return nil, fmt.Errorf("Error while querying sider (meddra_all_se): %v", err)
 	}
 	defer rows.Close()
 
@@ -95,7 +95,7 @@ func QueryMeddraFreq(query Queries.DBQuery) ([]*MeddraFreq, error) {
 	// Make the query
 	rows, err := db.Query(fullQuery)
 	if err != nil {
-		return nil, fmt.Errorf("Error while querying sider: ", err)
+		return nil, fmt.Errorf("Error while querying sider: %v", err)
 	}
 	defer rows.Close()
 

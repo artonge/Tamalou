@@ -41,9 +41,9 @@ func TestSQLiteQuery(t *testing.T) {
 }
 
 func TestIndexOBO(t *testing.T) {
-	fmt.Println(index.Fields())
-	fmt.Println(index.Document("HP:0000003"))
-	query := bleve.NewMatchQuery("+AltIDs:HP:0000003 -AltIDs:mustnot")
+	query := bleve.NewQueryStringQuery("Name:head")
+	// query := bleve.NewTermQuery("head")
+	// query.SetField("Name")
 	search := bleve.NewSearchRequest(query)
 	searchResults, err := index.Search(search)
 
@@ -51,5 +51,7 @@ func TestIndexOBO(t *testing.T) {
 		fmt.Println(err)
 	}
 
+	// docID := searchResults.Hits[0].ID
+	// doc, err := index.Document(docID)
 	fmt.Println(searchResults)
 }

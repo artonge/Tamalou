@@ -26,7 +26,7 @@ func QueryMeddra(query Queries.DBQuery) ([]*Meddra, error) {
 	// Make the query
 	rows, err := db.Query(fullQuery)
 	if err != nil {
-		return nil, fmt.Errorf("Error while querying sider (meddra): ", err)
+		return nil, fmt.Errorf("Error while querying sider (meddra): %v", err)
 	}
 	defer rows.Close()
 

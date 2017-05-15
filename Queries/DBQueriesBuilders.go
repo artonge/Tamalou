@@ -1,42 +1,34 @@
 package Queries
 
-import "strconv"
+import "fmt"
 
-func BuildSQLQuery(query DBQuery, queryType interface{}) string {
+func BuildSQLQuery(query ITamalouQuery) string {
 	var (
 		fullQuery string
-		operand   string
+		operator  string
 	)
 
-	switch queryType {
+	switch query.Type() {
 	case "or":
-		operand = " OR "
+		operator = " OR "
 	case "and":
-		operand = " AND "
+		operator = " AND "
 	default:
-		operand = ""
+		operator = ""
+		fullQuery = "symptom='" + query.Value() + "'"
 	}
 
 	// For each value in the map
 	// 	==> build a part of the query and append it to fullQuery
-	for key, value := range query {
-		switch key {
+	for _, child := range query.Children() {
+		fmt.Println("ok")
+		switch child.Type() {
 		case "and", "or":
-			fullQuery += "(" + BuildSQLQuery(value.(DBQuery), key) + ")"
+			fullQuery += "(" + BuildSQLQuery(child) + ")"
 		default:
-			switch value.(type) {
-			case string:
-				fullQuery += key + "='" + value.(string) + "'"
-			case int:
-				fullQuery += key + "=" + strconv.Itoa(value.(int))
-			case float64:
-				fullQuery += key + "=" + strconv.FormatFloat(value.(float64), 'f', 6, 64)
-			default:
-				fullQuery += key + "=" + strconv.Itoa(value.(int))
-			}
+			fmt.Println("Error while building SQL query\n	==> ", query)
 		}
-		fullQuery += operand
 	}
 
-	return fullQuery[:len(fullQuery)-len(operand)]
+	return fullQuery[:len(fullQuery)-len(operator)]
 }

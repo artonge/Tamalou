@@ -13,8 +13,14 @@ type argT struct {
 
 func main() {
 	cli.Run(new(argT), func(ctx *cli.Context) error {
+
 		argv := ctx.Argv().(*argT)
+
+		// Fetch diseases
 		results, err := orpha.Query(Queries.ParseQuery(argv.Query))
+		// ---
+
+		// Print results
 		if err != nil {
 			ctx.String("Error:\n	%v\n", err)
 		} else {
@@ -23,6 +29,7 @@ func main() {
 				ctx.String("	- %v\n", r.Value.Disease.Name.Text)
 			}
 		}
+
 		return nil
 	})
 }

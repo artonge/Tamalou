@@ -1,6 +1,7 @@
 package Queries
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -20,6 +21,16 @@ func TestParseQuery(t *testing.T) {
 		subQuery.Children()[1].Value() != "tete" ||
 		len(subQuery.Children()[0].Children()) != 0 ||
 		len(subQuery.Children()[1].Children()) != 0 {
+		t.Fail()
+	}
+}
+
+func TestBuildSQLQuery(t *testing.T) {
+
+	SQLQuery := BuildSQLQuery(ParseQuery("Anaemie"))
+
+	if SQLQuery != "symptom='Anaemie'" {
+		fmt.Println("query: ", SQLQuery)
 		t.Fail()
 	}
 }

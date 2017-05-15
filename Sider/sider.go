@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/artonge/Tamalou/Queries"
 	_ "github.com/go-sql-driver/mysql"
@@ -20,8 +21,8 @@ func init() {
 	}
 }
 
-func QueryMeddra(query Queries.DBQuery) ([]*Meddra, error) {
-	fullQuery := "SELECT * FROM meddra WHERE " + Queries.BuildSQLQuery(query, "")
+func QueryMeddra(query Queries.ITamalouQuery) ([]*Meddra, error) {
+	fullQuery := "SELECT * FROM meddra WHERE " + Queries.BuildSQLQuery(query)
 
 	// Make the query
 	rows, err := db.Query(fullQuery)
@@ -43,8 +44,8 @@ func QueryMeddra(query Queries.DBQuery) ([]*Meddra, error) {
 	return results, nil
 }
 
-func QueryMeddraAllIndications(query Queries.DBQuery) ([]*MeddraAllIndications, error) {
-	fullQuery := "SELECT * FROM meddra_all_indications WHERE " + Queries.BuildSQLQuery(query, "")
+func QueryMeddraAllIndications(query Queries.ITamalouQuery) ([]*MeddraAllIndications, error) {
+	fullQuery := "SELECT * FROM meddra_all_indications WHERE " + Queries.BuildSQLQuery(query)
 
 	// Make the query
 	rows, err := db.Query(fullQuery)
@@ -66,8 +67,17 @@ func QueryMeddraAllIndications(query Queries.DBQuery) ([]*MeddraAllIndications, 
 	return results, nil
 }
 
-func QueryMeddraAllSe(query Queries.DBQuery) ([]*MeddraAllSe, error) {
-	fullQuery := "SELECT * FROM meddra_all_se WHERE " + Queries.BuildSQLQuery(query, "")
+func Query(query Queries.ITamalouQuery) ([]*MeddraAllSe, error) {
+
+	return QuerySideEffects(query)
+	return nil, nil
+}
+
+func QuerySideEffects(query Queries.ITamalouQuery) ([]*MeddraAllSe, error) {
+	// Build SQL query base on the ITamalouQuery
+	fullQuery := "SELECT stitch_compound_id1, stitch_compound_id2, cui, side_effect_name FROM meddra_all_se WHERE " + Queries.BuildSQLQuery(query) + ";"
+	// Replace 'symptom' with 'side_effect_name'
+	fullQuery = strings.Replace(fullQuery, "symptom", "side_effect_name", -1)
 
 	// Make the query
 	rows, err := db.Query(fullQuery)
@@ -78,9 +88,10 @@ func QueryMeddraAllSe(query Queries.DBQuery) ([]*MeddraAllSe, error) {
 
 	var results = make([]*MeddraAllSe, 0, 100)
 
+	// Parse the results
 	for rows.Next() {
 		tmpMeddraAllSe := new(MeddraAllSe)
-		err := rows.Scan(&tmpMeddraAllSe.StitchCompoundID1, &tmpMeddraAllSe.StitchCompoundID2, &tmpMeddraAllSe.CUI, &tmpMeddraAllSe.MeddraConceptType, &tmpMeddraAllSe.CUIOfMeddraTerm, &tmpMeddraAllSe.SideEffectName)
+		err := rows.Scan(&tmpMeddraAllSe.StitchCompoundID1, &tmpMeddraAllSe.StitchCompoundID2, &tmpMeddraAllSe.CUI, &tmpMeddraAllSe.SideEffectName)
 		if err != nil {
 			return results, err
 		}
@@ -89,8 +100,8 @@ func QueryMeddraAllSe(query Queries.DBQuery) ([]*MeddraAllSe, error) {
 	return results, nil
 }
 
-func QueryMeddraFreq(query Queries.DBQuery) ([]*MeddraFreq, error) {
-	fullQuery := "SELECT * FROM meddra_freq WHERE " + Queries.BuildSQLQuery(query, "")
+func QueryMeddraFreq(query Queries.ITamalouQuery) ([]*MeddraFreq, error) {
+	fullQuery := "SELECT * FROM meddra_freq WHERE " + Queries.BuildSQLQuery(query)
 
 	// Make the query
 	rows, err := db.Query(fullQuery)

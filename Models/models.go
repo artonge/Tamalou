@@ -2,7 +2,10 @@ package Models
 
 type (
 	Disease struct {
-		Name string
+		Name    string
+		OMIMID  string
+		OrphaID float64
+		UMLSID  string
 	}
 
 	Drug struct {

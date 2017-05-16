@@ -140,6 +140,7 @@ func getDiseasesFromIDs(diseasesIDs []int) ([]*Models.Disease, error) {
 	for _, row := range queryResults.Rows {
 		tmpDisease := new(Models.Disease)
 		tmpDisease.Name = row.Value["Name"].(map[string]interface{})["text"].(string)
+		tmpDisease.OrphaID = row.Value["OrphaNumber"].(float64)
 		diseasesArray = append(diseasesArray, tmpDisease)
 	}
 

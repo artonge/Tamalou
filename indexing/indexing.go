@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 
+	"github.com/artonge/Tamalou/Queries"
 	"github.com/blevesearch/bleve"
 )
 
@@ -55,4 +56,15 @@ func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
 	}
 
 	return nil
+}
+
+func SearchQuery(index bleve.Index, query Queries.ITamalouQuery) (*bleve.SearchResult, error) {
+	strQuery := Queries.BuildIndexQuery(query)
+	indexQuery := bleve.NewMatchQuery(strQuery)
+	search := bleve.NewSearchRequest(indexQuery)
+	searchResults, err := index.Search(search)
+	if err != nil {
+		return nil, err
+	}
+	return searchResults, nil
 }

@@ -34,3 +34,8 @@ func TestBuildSQLQuery(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBuildIndexQuery(t *testing.T) {
+	indexQuery := BuildIndexQuery(ParseQuery("Anaemie"))
+	fmt.Println(indexQuery)
+}

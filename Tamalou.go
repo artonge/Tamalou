@@ -26,7 +26,7 @@ func main() {
 		} else {
 			ctx.String("Results (%v): \n", len(results))
 			for _, r := range results {
-				ctx.String("	- %v\n", r.Value.Disease.Name.Text)
+				ctx.String("	- %v\n", r.Name)
 			}
 		}
 

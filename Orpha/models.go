@@ -43,8 +43,20 @@ type (
 	}
 
 	ViewResult struct {
-		Id    string                `json:"id"`
-		Key   string                `json:"key"`
-		Value diseaseByClinicalSign `json:"value"`
+		Id    string                 `json:"id"`
+		Key   interface{}            `json:"key"`
+		Value map[string]interface{} `json:"value"`
 	}
+	//
+	// GetDiseasesResults struct {
+	// 	Id    string  `json:"id"`
+	// 	Key   int     `json:"key"`
+	// 	Value disease `json:"value"`
+	// }
 )
+
+func (result *ViewResult) String() string {
+	return result.Value["disease"].(map[string]interface{})["Name"].(map[string]interface{})["text"].(string)
+}
+
+// Value.Disease.Name.Text

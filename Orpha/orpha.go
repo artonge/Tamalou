@@ -1,12 +1,14 @@
 package orpha
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/url"
 	"strings"
 	"time"
 
+	"github.com/artonge/Tamalou/Models"
 	"github.com/artonge/Tamalou/Queries"
 	couchdb "github.com/rhinoman/couchdb-go"
 )
@@ -29,20 +31,20 @@ func init() {
 }
 
 // Fetch all diceases for the given ITamalouQuery
-func Query(query Queries.ITamalouQuery) ([]ViewResult, error) {
+func Query(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 	switch query.Type() {
 	case "or":
 		// Make a Query for all children of the OR node
 		// Append results together then remove duplicates
-		var results []ViewResult
+		var results []*Models.Disease
 		for _, child := range query.Children() {
 			subResults, err := Query(child)
 			if err != nil {
-				return results, err
+				return nil, err
 			}
 			// Merge if necessary
 			if len(results) > 0 {
-				results = merge(results, subResults, "or")
+				results = Models.Merge(results, subResults, "or")
 			} else {
 				results = subResults
 			}
@@ -51,15 +53,15 @@ func Query(query Queries.ITamalouQuery) ([]ViewResult, error) {
 	case "and":
 		// Make a Query for all children of the AND node
 		// Merge the results in order to only have the diseases shared by all clinicalSigns
-		var results []ViewResult
+		var results []*Models.Disease
 		for _, child := range query.Children() {
 			subResults, err := Query(child)
 			if err != nil {
-				return results, err
+				return nil, err
 			}
 			// Merge if necessary
 			if len(results) > 0 {
-				results = merge(results, subResults, "and")
+				results = Models.Merge(results, subResults, "and")
 			} else {
 				results = subResults
 			}
@@ -75,8 +77,8 @@ func Query(query Queries.ITamalouQuery) ([]ViewResult, error) {
 
 // Interface to the'getDiseaseByClinicalSign' view of the DB
 // Supports wild cards (*)
-func getDiseaseByClinicalSign(clinicalSign string) ([]ViewResult, error) {
-	results := ViewResponse{}
+func getDiseaseByClinicalSign(clinicalSign string) ([]*Models.Disease, error) {
+	queryResults := ViewResponse{}
 	var params url.Values
 	// Add quotes around the sign for json format
 	formatedClinicalSign := "\"" + clinicalSign + "\""
@@ -95,71 +97,51 @@ func getDiseaseByClinicalSign(clinicalSign string) ([]ViewResult, error) {
 		params = url.Values{"key": []string{formatedClinicalSign}}
 	}
 
-	// Make the request
-	err := DB.GetView("clinicalsigns", "GetDiseaseByClinicalSign", &results, &params)
+	// Make the request to couchDB
+	err := DB.GetView("clinicalsigns", "GetDiseaseByClinicalSign", &queryResults, &params)
 	if err != nil {
-		return results.Rows, fmt.Errorf("Error while Querying Orpha:\n	==>  %v", err)
+		return nil, fmt.Errorf("Error while Querying Orpha:\n	==>  %v", err)
 	}
 
-	return results.Rows, err
+	// Put diseases from queryResults in diseasesArray
+	var diseasesArray []*Models.Disease
+
+	// Get all the diseases from queryResults, format them and put them in diseasesArray
+	for _, row := range queryResults.Rows {
+		tmpDisease := new(Models.Disease)
+		tmpDisease.Name = row.Value["disease"].(map[string]interface{})["Name"].(map[string]interface{})["text"].(string)
+		diseasesArray = append(diseasesArray, tmpDisease)
+	}
+
+	return diseasesArray, err
 }
 
-// Merge to arrays
-// Support "or" and "and" logic operator
-func merge(list1 []ViewResult, list2 []ViewResult, operator string) []ViewResult {
-	var results []ViewResult
+// Interface to the'getDisease' view of the DB
+// Return the diseases informations from their IDs
+func getDiseasesFromIDs(diseasesIDs []int) ([]*Models.Disease, error) {
+	// Build ID json array
+	IDList, err := json.Marshal(diseasesIDs)
+	if err != nil {
+		return nil, fmt.Errorf("Error while converting IDs array to json :\n	==>  %v", err)
+	}
+	params := url.Values{"keys": []string{string(IDList)}}
 
-	switch operator {
-	case "and":
-		// Put all item of list1 contained in list2 in results
-		for _, item1 := range list1 {
-			for _, item2 := range list2 {
-				if item1.Value.Disease.Name.Text == item2.Value.Disease.Name.Text {
-					results = append(results, item1)
-				}
-			}
-		}
-
-		// Put all item of list2 contained in list1 in results
-		// Check that the item is not allready in results
-		for _, item2 := range list2 {
-			for _, item1 := range list1 {
-				if item1.Value.Disease.Name.Text == item2.Value.Disease.Name.Text {
-					contains := false
-					for _, itemR := range results {
-						if itemR.Value.Disease.Name.Text == item2.Value.Disease.Name.Text {
-							contains = true
-							break
-						}
-					}
-					if !contains {
-						results = append(results, item2)
-					}
-				}
-			}
-		}
-	case "or":
-		// Put all item of list1 in results
-		for _, item1 := range list1 {
-			results = append(results, item1)
-		}
-		// Put all item if list2 in results
-		// Check that the item is not allready in results
-		for _, item2 := range list2 {
-			contains := false
-			for _, itemR := range results {
-				if itemR.Value.Disease.Name.Text == item2.Value.Disease.Name.Text {
-					contains = true
-					break
-				}
-			}
-			if !contains {
-				results = append(results, item2)
-			}
-		}
-	default:
-		fmt.Println("Operator <" + operator + "> not suported for merging")
+	// Make the request to couchDB
+	queryResults := ViewResponse{}
+	err = DB.GetView("diseases", "GetDiseases", &queryResults, &params)
+	if err != nil {
+		return nil, fmt.Errorf("Error while Querying Orpha:\n	==>  %v", err)
 	}
 
-	return results
+	// Put diseases from queryResults in diseasesArray
+	var diseasesArray []*Models.Disease
+
+	// Get all the diseases from queryResults, format them and put them in diseasesArray
+	for _, row := range queryResults.Rows {
+		tmpDisease := new(Models.Disease)
+		tmpDisease.Name = row.Value["Name"].(map[string]interface{})["text"].(string)
+		diseasesArray = append(diseasesArray, tmpDisease)
+	}
+
+	return diseasesArray, err
 }

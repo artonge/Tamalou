@@ -7,6 +7,7 @@ import (
 
 	"github.com/artonge/Tamalou/Queries"
 	"github.com/blevesearch/bleve"
+	"github.com/blevesearch/bleve/document"
 )
 
 func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
@@ -58,7 +59,7 @@ func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
 	return nil
 }
 
-func SearchQuery(index bleve.Index, query Queries.ITamalouQuery) (*bleve.SearchResult, error) {
+func SearchQuery(index bleve.Index, query Queries.ITamalouQuery, buildIndexable func(*document.Document) Indexable) ([]Indexable, error) {
 	strQuery := Queries.BuildIndexQuery(query)
 	indexQuery := bleve.NewMatchQuery(strQuery)
 	search := bleve.NewSearchRequest(indexQuery)
@@ -66,5 +67,13 @@ func SearchQuery(index bleve.Index, query Queries.ITamalouQuery) (*bleve.SearchR
 	if err != nil {
 		return nil, err
 	}
-	return searchResults, nil
+	var results []Indexable
+	for _, hit := range searchResults.Hits {
+		doc, err := index.Document(hit.ID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		results = append(results, buildIndexable(doc))
+	}
+	return results, nil
 }

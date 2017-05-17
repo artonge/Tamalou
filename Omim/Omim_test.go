@@ -28,18 +28,10 @@ func TestIndexOmim(t *testing.T) {
 }
 
 func TestOmimSearchQuery(t *testing.T) {
-	var omims []indexing.Indexable
 	tquery := Queries.ParseQuery("head")
-	results, err := indexing.SearchQuery(index, tquery)
+	results, err := indexing.SearchQuery(index, tquery, BuildOmimStructFromDoc)
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, hit := range results.Hits {
-		doc, err := index.Document(hit.ID)
-		if err != nil {
-			log.Fatal(err)
-		}
-		omims = append(omims, BuildOmimStructFromDoc(doc))
-	}
-	fmt.Println(omims)
+	fmt.Println(results)
 }

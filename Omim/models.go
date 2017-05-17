@@ -1,6 +1,9 @@
 package Omim
 
-import "github.com/blevesearch/bleve/document"
+import (
+	"github.com/artonge/Tamalou/indexing"
+	"github.com/blevesearch/bleve/document"
+)
 
 type OmimStruct struct {
 	FieldNumber          string
@@ -17,7 +20,7 @@ func (me OmimStruct) GetID() string {
 	return me.FieldNumber
 }
 
-func BuildOmimStructFromDoc(doc *document.Document) OmimStruct {
+func BuildOmimStructFromDoc(doc *document.Document) indexing.Indexable {
 	me := OmimStruct{}
 	for _, field := range doc.Fields {
 		val := field.Value()

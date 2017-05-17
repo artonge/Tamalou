@@ -14,7 +14,7 @@ var db *sql.DB
 // Init DB connection to HPO SQLite DB
 func init() {
 	var err error
-	db, err = sql.Open("sqlite3", "../datas/hpo/hpo_annotations.sqlite")
+	db, err = sql.Open("sqlite3", "datas/hpo/hpo_annotations.sqlite")
 	if err != nil {
 		fmt.Println("Error in HPO SQLite init: ", err)
 	}

@@ -20,7 +20,7 @@ func indexOBO() (bleve.Index, error) {
 	}
 
 	// Open the obo file
-	file, err := os.Open("../datas/hpo/hp.obo")
+	file, err := os.Open("datas/hpo/hp.obo")
 	if err != nil {
 		return index, fmt.Errorf("Error in HPO's obo connector init\n	Error	==> %v", err)
 

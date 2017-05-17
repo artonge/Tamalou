@@ -14,6 +14,7 @@ var index bleve.Index
 func init() {
 	fmt.Println("Indexing obo file...")
 	pwd, err := os.Getwd()
+	fmt.Println(pwd)
 	if err != nil {
 		fmt.Println("Error while getting current working directory:\n Error ==> ", err, pwd)
 	}

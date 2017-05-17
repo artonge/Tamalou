@@ -23,6 +23,5 @@ _testmain.go
 *.test
 *.prof
 
-datas/*
-Omim/omim-search.bleve
-HPO/obo-search.bleve
+datas
+*.bleve

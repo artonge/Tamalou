@@ -1,6 +1,6 @@
 package Queries
 
-import "fmt"
+import "strconv"
 
 func BuildSQLQuery(query ITamalouQuery) string {
 	var (
@@ -15,18 +15,22 @@ func BuildSQLQuery(query ITamalouQuery) string {
 		operator = " AND "
 	default:
 		operator = ""
-		fullQuery = "symptom='" + query.Value() + "'"
+		switch query.Value().(type) {
+		case string:
+			return string(query.Type()) + "='" + query.Value().(string) + "'"
+		case int:
+			return string(query.Type()) + "=" + strconv.Itoa(query.Value().(int))
+		}
 	}
 
-	// For each value in the map
+	// For each sub queries
 	// 	==> build a part of the query and append it to fullQuery
 	for _, child := range query.Children() {
-		fmt.Println("ok")
 		switch child.Type() {
 		case "and", "or":
-			fullQuery += "(" + BuildSQLQuery(child) + ")"
+			fullQuery += "(" + BuildSQLQuery(child) + ")" + operator
 		default:
-			fmt.Println("Error while building SQL query\n	==> ", query)
+			fullQuery += BuildSQLQuery(child) + operator
 		}
 	}
 

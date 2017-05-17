@@ -10,32 +10,27 @@ import (
 
 func TestSQLiteQuery(t *testing.T) {
 	// Fetch all
-	hpoArray, err := HPOQuery(Queries.DBQuery{
-		"1": "1",
-	})
+	hpoArray, err := HPOQuery(Queries.NewTamalouQuery("1", "1", nil))
 	if err != nil {
 		fmt.Println("Unit Test Error (1=1): \n	==> ", err, "\n	==> ", hpoArray)
 		t.Fail()
 	}
 
 	// Fetch none - wrong query
-	hpoArray, err = HPOQuery(Queries.DBQuery{
-		"fail": "success",
-	})
+	hpoArray, err = HPOQuery(Queries.NewTamalouQuery("fail", "success", nil))
 	if err == nil {
 		fmt.Println("Unit Test Error (fail=success): \n	==> ", err, "\n	==> ", hpoArray)
 		t.Fail()
 	}
 
 	// Fetch some
-	hpoArray, err = HPOQuery(Queries.DBQuery{
-		"and": Queries.DBQuery{
-			"disease_id": "1",
-			"1":          1,
-		},
-	})
+	hpoArray, err = HPOQuery(Queries.NewTamalouQuery("and", "", []Queries.ITamalouQuery{
+		Queries.NewTamalouQuery("disease_id", 1, nil),
+		Queries.NewTamalouQuery("1", 1, nil),
+	}))
+	fmt.Println(hpoArray)
 	if err != nil || hpoArray[0].DiseaseID != "1" {
-		fmt.Println("Unit Test Error (disease_id=1 AND 1 = 1): \n	==> ", err, "\n	==> ", hpoArray)
+		fmt.Println("Unit Test Error (disease_id=1 AND 1=1): \n	==> ", err, "\n	==> ", hpoArray)
 		t.Fail()
 	}
 }

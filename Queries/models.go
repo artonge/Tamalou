@@ -8,13 +8,13 @@ type TamalouQueryType string
 type ITamalouQuery interface {
 	Children() []ITamalouQuery // Return The query children
 	Type() TamalouQueryType    // OR/AND/SYMPTOM
-	Value() string             // For symptoms only
+	Value() interface{}        // For symptoms only
 }
 
 type TamalouQuery struct {
 	children  []ITamalouQuery
 	queryType TamalouQueryType
-	value     string
+	value     interface{}
 }
 
 func (q TamalouQuery) Children() []ITamalouQuery {
@@ -25,6 +25,14 @@ func (q TamalouQuery) Type() TamalouQueryType {
 	return q.queryType
 }
 
-func (q TamalouQuery) Value() string {
+func (q TamalouQuery) Value() interface{} {
 	return q.value
+}
+
+func NewTamalouQuery(queryType string, value interface{}, children []ITamalouQuery) TamalouQuery {
+	return TamalouQuery{
+		value:     value,
+		queryType: TamalouQueryType(queryType),
+		children:  children,
+	}
 }

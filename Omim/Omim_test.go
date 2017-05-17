@@ -33,5 +33,5 @@ func TestOmimSearchQuery(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(results)
+	fmt.Println(results[0])
 }

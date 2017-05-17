@@ -1,6 +1,9 @@
 package Queries
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 func BuildIndexQuery(query ITamalouQuery) string {
 	var (
@@ -8,7 +11,12 @@ func BuildIndexQuery(query ITamalouQuery) string {
 	)
 
 	if query.Type() == "symptom" {
-		fullQuery = query.Value()
+		switch query.Value().(type) {
+		case string:
+			fullQuery = query.Value().(string)
+		case int:
+			fullQuery = strconv.Itoa(query.Value().(int))
+		}
 	}
 
 	// For each value in the map

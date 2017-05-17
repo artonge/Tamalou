@@ -10,10 +10,11 @@ type (
 
 	Drug struct {
 		Name string
+		CUI  string
 	}
 
 	Symptom struct {
-		Name   string
-		HPO_ID string
+		Name  string
+		HPOID string
 	}
 )

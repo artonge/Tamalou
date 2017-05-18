@@ -57,11 +57,34 @@ func fetchDiseases(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 	results := Models.Merge(resultsOrpha, resultsHPO, "or")
 	// ---
 
-	return results, nil
+	return filterDiseases(results), nil
 }
 
 func fetchDrugs(query Queries.ITamalouQuery) ([]*Models.Drug, error) {
 	// Fetch drugs
 
 	return nil, nil
+}
+
+func filterDiseases(diseaseArray []*Models.Disease) []*Models.Disease {
+	var filteredDiseases []*Models.Disease
+
+	// Loop throught the diseaseArray
+	for _, d := range diseaseArray {
+		// Check that filteredDiseases doesn't contains the current disease
+		contains := false
+		for _, df := range filteredDiseases {
+			if d.Name == df.Name {
+				contains = true
+				break
+			}
+		}
+
+		// If filteredDiseases doesn't contains the disease, add it
+		if !contains {
+			filteredDiseases = append(filteredDiseases, d)
+		}
+	}
+
+	return filteredDiseases
 }

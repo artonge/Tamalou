@@ -26,3 +26,4 @@ _testmain.go
 datas/*
 Omim/omim-search.bleve
 HPO/obo-search.bleve
+StitchNAtc/stitchnatc-search.bleve

@@ -17,7 +17,7 @@ func init() {
 	}
 	err = os.RemoveAll(pwd + "/omim-search.bleve")
 	if err != nil {
-		fmt.Println("Error while removing old obo index:\n Error ==> ", err)
+		fmt.Println("Error while removing old omim index:\n Error ==> ", err)
 	}
 	index, err = indexOmim()
 	if err != nil {

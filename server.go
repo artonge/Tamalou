@@ -1,35 +1,48 @@
 package main
 
 import (
+	"log"
+	"net/http"
+
+	"github.com/ant0ine/go-json-rest/rest"
 	"github.com/artonge/Tamalou/Queries"
-	"github.com/mkideal/cli"
 )
 
-func startCLI() {
-	cli.Run(new(argT), func(ctx *cli.Context) error {
+func request(w rest.ResponseWriter, r *rest.Request) {
+	rawQuery := r.FormValue("request")
+	query := Queries.ParseQuery(rawQuery)
 
-		argv := ctx.Argv().(*argT)
-		query := Queries.ParseQuery(argv.Query)
+	// Get diseases and drugs
+	diseases, err := fetchDiseases(query)
+	if err != nil {
+		w.WriteJson(err)
+	}
+	drugs, err := fetchDrugs(query)
+	if err != nil {
+		w.WriteJson(err)
+	}
 
-		diseases, err := fetchDiseases(query)
-		if err != nil {
-			ctx.String("Error:\n	%v\n", err)
-		}
-		drugs, err := fetchDrugs(query)
-		if err != nil {
-			ctx.String("Error:\n	%v\n", err)
-		}
-
-		// Print results
-		ctx.String("Diseases (%v): \n", len(diseases))
-		for _, r := range diseases {
-			ctx.String("	- %v\n", r.Name)
-		}
-		ctx.String("Drugs (%v): \n", len(drugs))
-		for _, d := range drugs {
-			ctx.String("	- %v\n", d.Name)
-		}
-
-		return nil
+	w.WriteJson(map[string]interface{}{
+		"diseases": diseases,
+		"drugs":    drugs,
 	})
+}
+
+func startServer() {
+	api := rest.NewApi()
+	api.Use(rest.DefaultDevStack...)
+
+	router, err := rest.MakeRouter(
+		rest.Get("/request", request),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	api.SetApp(router)
+
+	http.Handle("/api/", http.StripPrefix("/api", api.MakeHandler()))
+
+	http.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("."))))
+
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

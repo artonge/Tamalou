@@ -25,21 +25,39 @@ func init() {
 }
 
 func QueryOmimIndex(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
+	switch query.Type() {
+	case "or":
+	case "and":
+		var mergeDiseases []*Models.Disease
+		for _, child := range query.Children() {
+			diseases, err := QueryOmimIndex(child)
+			if err != nil {
+				return nil, err
+			}
+			if len(mergeDiseases) > 0 {
+				mergeDiseases = Models.Merge(mergeDiseases, diseases, string(query.Type()))
+			} else {
+				mergeDiseases = diseases
+			}
+		}
+		return mergeDiseases, nil
+	default:
+		results, err := indexing.SearchQuery(index, query, BuildOmimStructFromDoc)
+		if err != nil {
+			return nil, fmt.Errorf("Error while querying omim's index\n	Error ==> %v", err)
+		}
 
-	results, err := indexing.SearchQuery(index, query, BuildOmimStructFromDoc)
-	if err != nil {
-		return nil, fmt.Errorf("Error while querying omim's index\n	Error ==> %v", err)
+		var diseaseArray []*Models.Disease
+
+		for _, r := range results {
+			var tmpDisease Models.Disease
+			tmpDisease.Name = r.(OmimStruct).FieldDeseaseName
+			tmpDisease.UMLSID = r.(OmimStruct).FieldCUI
+			tmpDisease.OMIMID = r.(OmimStruct).FieldNumber
+			diseaseArray = append(diseaseArray, &tmpDisease)
+		}
+
+		return diseaseArray, nil
 	}
-
-	var diseaseArray []*Models.Disease
-
-	for _, r := range results {
-		var tmpDisease Models.Disease
-		tmpDisease.Name = r.(OmimStruct).FieldDeseaseName
-		tmpDisease.UMLSID = r.(OmimStruct).FieldCUI
-		tmpDisease.OMIMID = r.(OmimStruct).FieldNumber
-		diseaseArray = append(diseaseArray, &tmpDisease)
-	}
-
 	return nil, nil
 }

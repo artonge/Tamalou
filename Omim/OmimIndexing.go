@@ -18,7 +18,7 @@ func indexOmim() error {
 		return fmt.Errorf("Error while parsing the file omim_onto.csv: %v", err)
 	}
 	// Open the omim file
-	file, err := os.Open("../datas/omim/omim.txt")
+	file, err := os.Open("datas/omim/omim.txt")
 	if err != nil {
 		return fmt.Errorf("Error in Omim's connector init\n	Error	==> %v", err)
 	}
@@ -36,7 +36,7 @@ func indexOmim() error {
 // ParseOmimCsv parse Omim_onto.csv
 // @return a map with the FieldNumber in key
 func parseOmimCsv() (map[string]OmimStruct, error) {
-	omimCsvFile, err := os.Open("../datas/omim/omim_onto.csv")
+	omimCsvFile, err := os.Open("datas/omim/omim_onto.csv")
 	if err != nil {
 		return nil, err
 	}

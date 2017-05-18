@@ -35,17 +35,8 @@ func indexOBO() (bleve.Index, error) {
 	return index, err
 }
 
-var term *HPOOBOStruct
-
 // Return the next term
 func nextTerm(scanner *bufio.Scanner) (*HPOOBOStruct, error) {
-
-	// Finish current term
-	// We need to index it for all of its synonymes
-	// if term != nil && term.count < len(term.Synonymes) {
-	// 	return term, nil
-	// }
-
 	// Go to the next [Term]
 	for scanner.Scan() {
 		if scanner.Text() == "[Term]" {
@@ -54,8 +45,7 @@ func nextTerm(scanner *bufio.Scanner) (*HPOOBOStruct, error) {
 	}
 
 	// Init the new term
-	term = new(HPOOBOStruct)
-	term.count = -1
+	term := new(HPOOBOStruct)
 
 	// Continue the file parsing from the last position
 	for scanner.Scan() {

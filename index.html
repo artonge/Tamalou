@@ -1,0 +1,35 @@
+<!DOCTYPE>
+<html>
+<head>
+  <title>Tamalou</title>
+  <meta charset="utf-8"/>
+</head>
+  <input type="text" id="request-input"></input>
+  <button onclick="makeQuery()">Fetch !</button>
+  <span id="loading-indicator"></span>
+
+  <div id="results-container"></div>
+
+
+  <script>
+    function makeQuery() {
+      var query = document.getElementById('request-input').value
+      var query = document.getElementById('loading-indicator').innerText = "Loading.."
+      fetch("http://localhost:8080/api/request?request="+query)
+      .then(function(result) {
+        return result.json()
+      })
+      .then(function(result) {
+
+        var elem = document.getElementById("results-container")
+        elem.innerHTML += `<div>${result.diseases[0].name}</div>`
+
+        // for (let d in result.diseases) {
+        //   elem.innerHTML += `<div>${d.name}</div>`
+        // }
+        var query = document.getElementById('loading-indicator').innerText = ""
+        console.log(result)
+      })
+    }
+  </script>
+</html>

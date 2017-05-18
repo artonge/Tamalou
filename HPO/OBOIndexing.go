@@ -20,7 +20,7 @@ func indexOBO() (bleve.Index, error) {
 	}
 
 	// Open the obo file
-	file, err := os.Open("../datas/hpo/hp.obo")
+	file, err := os.Open("datas/hpo/hp.obo")
 	if err != nil {
 		return index, fmt.Errorf("Error in HPO's obo connector init\n	Error	==> %v", err)
 
@@ -35,8 +35,16 @@ func indexOBO() (bleve.Index, error) {
 	return index, err
 }
 
+var term *HPOOBOStruct
+
 // Return the next term
 func nextTerm(scanner *bufio.Scanner) (*HPOOBOStruct, error) {
+
+	// Finish current term
+	// We need to index it for all of its synonymes
+	// if term != nil && term.count < len(term.Synonymes) {
+	// 	return term, nil
+	// }
 
 	// Go to the next [Term]
 	for scanner.Scan() {
@@ -46,7 +54,8 @@ func nextTerm(scanner *bufio.Scanner) (*HPOOBOStruct, error) {
 	}
 
 	// Init the new term
-	term := new(HPOOBOStruct)
+	term = new(HPOOBOStruct)
+	term.count = -1
 
 	// Continue the file parsing from the last position
 	for scanner.Scan() {

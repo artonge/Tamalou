@@ -69,7 +69,7 @@ func Query(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 		return results, nil
 	case "symptom":
 		// Make a request to couchDB when the query's type is a symptom
-		return getDiseaseByClinicalSign(query.Value())
+		return getDiseaseByClinicalSign(query.Value().(string))
 	default:
 		return nil, fmt.Errorf("Error while querying Orpha:\n	==> Error in query format: %v", query)
 	}

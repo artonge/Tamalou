@@ -61,7 +61,7 @@ func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
 
 func SearchQuery(index bleve.Index, query Queries.ITamalouQuery, buildIndexable func(*document.Document) Indexable) ([]Indexable, error) {
 	strQuery := Queries.BuildIndexQuery(query)
-	indexQuery := bleve.NewMatchQuery(strQuery)
+	indexQuery := bleve.NewQueryStringQuery(strQuery)
 	search := bleve.NewSearchRequest(indexQuery)
 	searchResults, err := index.Search(search)
 	if err != nil {

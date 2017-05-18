@@ -23,7 +23,6 @@ _testmain.go
 *.test
 *.prof
 
-datas/*
-Omim/omim-search.bleve
-HPO/obo-search.bleve
-StitchNAtc/stitchnatc-search.bleve
+
+datas
+*.bleve

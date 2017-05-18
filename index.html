@@ -13,20 +13,19 @@
 
   <script>
     function makeQuery() {
+      var elem = document.getElementById("results-container")
+      elem.innerHTML = ''
       var query = document.getElementById('request-input').value
-      var query = document.getElementById('loading-indicator').innerText = "Loading.."
+      document.getElementById('loading-indicator').innerText = "Loading.."
       fetch("http://localhost:8080/api/request?request="+query)
       .then(function(result) {
         return result.json()
       })
       .then(function(result) {
 
-        var elem = document.getElementById("results-container")
-        elem.innerHTML += `<div>${result.diseases[0].name}</div>`
-
-        // for (let d in result.diseases) {
-        //   elem.innerHTML += `<div>${d.name}</div>`
-        // }
+        for (let d of result.diseases) {
+          elem.innerHTML += `<div>${d.name}</div>`
+        }
         var query = document.getElementById('loading-indicator').innerText = ""
         console.log(result)
       })

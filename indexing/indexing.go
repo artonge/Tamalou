@@ -4,11 +4,35 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 
 	"github.com/artonge/Tamalou/Queries"
 	"github.com/blevesearch/bleve"
 	"github.com/blevesearch/bleve/document"
 )
+
+func InitIndex(indexFile string) (bleve.Index, error) {
+	// Get path of the index file
+	pwd, err := os.Getwd()
+	if err != nil {
+		return nil, fmt.Errorf("Error while getting current working directory:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
+	}
+
+	// Remove the old index
+	err = os.RemoveAll(pwd + "/" + indexFile)
+	if err != nil {
+		return nil, fmt.Errorf("Error while removing old omim index:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
+	}
+
+	// Create a nex index file
+	mapping := bleve.NewIndexMapping()
+	index, err := bleve.New("omim-search.bleve", mapping)
+	if err != nil {
+		return nil, fmt.Errorf("Error while creating a new index for omim:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
+	}
+
+	return index, nil
+}
 
 func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
 	batch := index.NewBatch()

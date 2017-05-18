@@ -2,26 +2,44 @@ package Omim
 
 import (
 	"fmt"
-	"os"
 
+	"github.com/artonge/Tamalou/Models"
+	"github.com/artonge/Tamalou/Queries"
+	"github.com/artonge/Tamalou/indexing"
 	"github.com/blevesearch/bleve"
 )
 
 var index bleve.Index
 
 func init() {
-	fmt.Println("Indexing omim file...")
-	pwd, err := os.Getwd()
+	var err error
+	index, err = indexing.InitIndex("omim-search.bleve")
 	if err != nil {
-		fmt.Println("Error while getting current working directory:\n Error ==> ", err, pwd)
+		fmt.Println("Error while initing omim index:\n	Error ==> ", err)
 	}
-	err = os.RemoveAll(pwd + "/omim-search.bleve")
+
+	err = indexOmim()
 	if err != nil {
-		fmt.Println("Error while removing old omim index:\n Error ==> ", err)
+		fmt.Println("Error while indexing omim's csv:\n	Error ==> ", err)
 	}
-	index, err = indexOmim()
+}
+
+func QueryOmimIndex(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
+
+	results, err := indexing.SearchQuery(index, query, BuildOmimStructFromDoc)
 	if err != nil {
-		fmt.Println("Error while indexing Omim file:\n Error ==> ", err)
+		return nil, fmt.Errorf("Error while querying omim's index\n	Error ==> %v", err)
 	}
-	fmt.Println("Omim file indexed.")
+
+	var diseaseArray []*Models.Disease
+
+	for _, r := range results {
+		var tmpDisease Models.Disease
+		tmpDisease.Name = r.(OmimStruct).FieldDeseaseName
+		tmpDisease.UMLSID = r.(OmimStruct).FieldCUI
+		tmpDisease.OMIMID = r.(OmimStruct).FieldNumber
+		diseaseArray = append(diseaseArray, &tmpDisease)
+	}
+
+	return nil, nil
 }

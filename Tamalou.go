@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/artonge/Tamalou/HPO"
 	"github.com/artonge/Tamalou/Models"
+	"github.com/artonge/Tamalou/Omim"
 	orpha "github.com/artonge/Tamalou/Orpha"
 	"github.com/artonge/Tamalou/Queries"
 	"github.com/mkideal/cli"
@@ -30,7 +31,13 @@ func fetchDiseases(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 	if err != nil {
 		return nil, err
 	}
+	// OMIM
+	resultsOMIM, err := Omim.QueryOmimIndex(query)
+	if err != nil {
+		return nil, err
+	}
 	results := Models.Merge(resultsOrpha, resultsHPO, "or")
+	results = Models.Merge(results, resultsOMIM, "or")
 	// ---
 
 	return filterDiseases(results), nil

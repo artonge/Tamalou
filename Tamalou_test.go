@@ -12,10 +12,6 @@ func TestFetchDiseases(t *testing.T) {
 		Queries.NewTamalouQuery("symptom", "Multicystic kidney dysplasia", nil),
 	}))
 
-	// for _, r := range results {
-	// 	fmt.Println(r.Name)
-	// }
-
 	if err != nil {
 		fmt.Println("Unit test error: TestFetchDiseases:\n ==> ", err)
 		t.Fail()

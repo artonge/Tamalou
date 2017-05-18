@@ -29,12 +29,6 @@ type HPOOBOStruct struct {
 
 func (obo HPOOBOStruct) GetID() string {
 	return obo.ID
-	// obo.count++
-	// if obo.count == 0 {
-	// 	return obo.Name
-	// } else {
-	// 	return obo.Synonymes[obo.count-1]
-	// }
 }
 
 func BuildOboStructFromDoc(doc *document.Document) indexing.Indexable {

@@ -65,6 +65,7 @@ func filterDiseases(diseaseArray []*Models.Disease) []*Models.Disease {
 
 		// If filteredDiseases doesn't contains the disease, add it
 		if !contains {
+			d.Score = 1
 			filteredDiseases = append(filteredDiseases, d)
 		}
 	}

@@ -97,7 +97,6 @@ func getDiseaseByClinicalSign(clinicalSign string) ([]*Models.Disease, error) {
 		tmpDisease := new(Models.Disease)
 		tmpDisease.Name = row.Value["disease"].(map[string]interface{})["Name"].(map[string]interface{})["text"].(string)
 		tmpDisease.OrphaID = row.Value["disease"].(map[string]interface{})["OrphaNumber"].(float64)
-		fmt.Println(tmpDisease.OrphaID)
 		tmpDisease.Sources = append(tmpDisease.Sources, "Orpha")
 		diseasesArray = append(diseasesArray, tmpDisease)
 	}

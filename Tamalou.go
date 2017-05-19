@@ -62,8 +62,9 @@ func fetchDiseases(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 
 func fetchDrugs(query Queries.ITamalouQuery) ([]*Models.Drug, error) {
 	// Fetch drugs
+	results := make([]*Models.Drug, 0)
 
-	return nil, nil
+	return results, nil
 }
 
 func filterDiseases(diseaseArray []*Models.Disease) []*Models.Disease {

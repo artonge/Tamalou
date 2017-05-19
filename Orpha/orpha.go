@@ -30,26 +30,10 @@ func init() {
 	DB = conn.SelectDB("orphadatabase", nil)
 }
 
-// Fetch all diceases for the given ITamalouQuery
+// Query - Fetch all diceases for the given ITamalouQuery
 func Query(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 	switch query.Type() {
 	case "or":
-		// Make a Query for all children of the OR node
-		// Append results together then remove duplicates
-		var results []*Models.Disease
-		for _, child := range query.Children() {
-			subResults, err := Query(child)
-			if err != nil {
-				return nil, err
-			}
-			// Merge if necessary
-			if len(results) > 0 {
-				results = Models.Merge(results, subResults, "or")
-			} else {
-				results = subResults
-			}
-		}
-		return results, nil
 	case "and":
 		// Make a Query for all children of the AND node
 		// Merge the results in order to only have the diseases shared by all clinicalSigns
@@ -61,7 +45,7 @@ func Query(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 			}
 			// Merge if necessary
 			if len(results) > 0 {
-				results = Models.Merge(results, subResults, "and")
+				results = Models.Merge(results, subResults, string(query.Type()))
 			} else {
 				results = subResults
 			}
@@ -69,10 +53,12 @@ func Query(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 		return results, nil
 	case "symptom":
 		// Make a request to couchDB when the query's type is a symptom
-		return getDiseaseByClinicalSign(query.Value())
+		return getDiseaseByClinicalSign(query.Value().(string))
 	default:
 		return nil, fmt.Errorf("Error while querying Orpha:\n	==> Error in query format: %v", query)
 	}
+
+	return nil, nil
 }
 
 // Interface to the'getDiseaseByClinicalSign' view of the DB
@@ -110,15 +96,17 @@ func getDiseaseByClinicalSign(clinicalSign string) ([]*Models.Disease, error) {
 	for _, row := range queryResults.Rows {
 		tmpDisease := new(Models.Disease)
 		tmpDisease.Name = row.Value["disease"].(map[string]interface{})["Name"].(map[string]interface{})["text"].(string)
+		tmpDisease.OrphaID = row.Value["disease"].(map[string]interface{})["OrphaNumber"].(float64)
+		tmpDisease.Sources = append(tmpDisease.Sources, "Orpha")
 		diseasesArray = append(diseasesArray, tmpDisease)
 	}
 
 	return diseasesArray, err
 }
 
-// Interface to the'getDisease' view of the DB
+// GetDiseasesFromIDs - Interface to the'getDisease' view of the DB
 // Return the diseases informations from their IDs
-func getDiseasesFromIDs(diseasesIDs []int) ([]*Models.Disease, error) {
+func GetDiseasesFromIDs(diseasesIDs []float64) ([]*Models.Disease, error) {
 	// Build ID json array
 	IDList, err := json.Marshal(diseasesIDs)
 	if err != nil {
@@ -141,6 +129,7 @@ func getDiseasesFromIDs(diseasesIDs []int) ([]*Models.Disease, error) {
 		tmpDisease := new(Models.Disease)
 		tmpDisease.Name = row.Value["Name"].(map[string]interface{})["text"].(string)
 		tmpDisease.OrphaID = row.Value["OrphaNumber"].(float64)
+		tmpDisease.Sources = append(tmpDisease.Sources, "Orpha")
 		diseasesArray = append(diseasesArray, tmpDisease)
 	}
 

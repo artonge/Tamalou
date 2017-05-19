@@ -24,6 +24,7 @@ type HPOOBOStruct struct {
 	Xrefs      []string
 	IsA        string
 	Obsolete   bool
+	count      int
 }
 
 func (obo HPOOBOStruct) GetID() string {
@@ -51,7 +52,7 @@ func BuildOboStructFromDoc(doc *document.Document) indexing.Indexable {
 			term.Xrefs = []string{string(val)}
 		case "IsA":
 			term.IsA = string(val)
-		case "IsObsolete": // use with consider ?
+		case "Obsolete": // use with consider ?
 			term.Obsolete = true
 		case "created_by", "property_value", "replaced_by", "creation_date", "subset", "is_anonymous", "consider":
 		default:

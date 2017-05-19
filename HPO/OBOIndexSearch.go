@@ -1,17 +1,23 @@
 package HPO
 
 import (
-	"fmt"
-
-	"github.com/artonge/Tamalou/Models"
 	"github.com/artonge/Tamalou/Queries"
 	"github.com/artonge/Tamalou/indexing"
 )
 
-func QueryIndex(query Queries.ITamalouQuery) ([]Models.Disease, error) {
-
+// QueryIndex - obo index
+// Get IDs of terms matching the query (name or synonymes)
+func QueryIndex(query Queries.ITamalouQuery) ([]string, error) {
 	results, err := indexing.SearchQuery(index, query, BuildOboStructFromDoc)
+	if err != nil {
+		return nil, err
+	}
 
-	fmt.Println(results, err)
-	return nil, nil
+	var diseasesIDs []string
+
+	for _, res := range results {
+		diseasesIDs = append(diseasesIDs, res.GetID())
+	}
+
+	return diseasesIDs, nil
 }

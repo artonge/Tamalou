@@ -10,40 +10,33 @@ import (
 	"strings"
 
 	"github.com/artonge/Tamalou/indexing"
-	"github.com/blevesearch/bleve"
 )
 
-func indexOmim() (bleve.Index, error) {
-	// Create the index if it doesn't exist
-	mapping := bleve.NewIndexMapping()
-	index, err := bleve.New("omim-search.bleve", mapping)
-	if err != nil {
-		return index, fmt.Errorf("Error while creating a new index for omim: %v", err)
-	}
-
+func indexOmim() error {
 	dicCsv, err := parseOmimCsv()
 	if err != nil {
-		return index, fmt.Errorf("Error while parsing the file omim_onto.csv: %v", err)
+		return fmt.Errorf("Error while parsing the file omim_onto.csv: %v", err)
 	}
 	// Open the omim file
-	file, err := os.Open("../datas/omim/omim.txt")
+	file, err := os.Open("datas/omim/omim.txt")
 	if err != nil {
-		return index, fmt.Errorf("Error in Omim's connector init\n	Error	==> %v", err)
+		return fmt.Errorf("Error in Omim's connector init\n	Error	==> %v", err)
 	}
 	// Create a new Reader to parse the file
 	reader := bufio.NewReader(file)
 
+	// Index the CSV
 	err = indexing.IndexDocs(index, func() (indexing.Indexable, error) {
 		return nextTerm(reader, dicCsv)
 	})
 
-	return index, err
+	return err
 }
 
 // ParseOmimCsv parse Omim_onto.csv
 // @return a map with the FieldNumber in key
 func parseOmimCsv() (map[string]OmimStruct, error) {
-	omimCsvFile, err := os.Open("../datas/omim/omim_onto.csv")
+	omimCsvFile, err := os.Open("datas/omim/omim_onto.csv")
 	if err != nil {
 		return nil, err
 	}

@@ -1,0 +1,68 @@
+<!DOCTYPE>
+<html>
+<head>
+  <title>Tamalou</title>
+  <meta charset="utf-8"/>
+</head>
+  <input type="text" id="request-input"></input>
+  <button onclick="makeQuery()">Fetch !</button>
+  <button onclick="sortResults()">Sort by score</button>
+  <div id="loading-indicator"></div>
+  <div id="request-container"></div>
+
+  <div id="results-container">
+    <table id="diseases-container"></table>
+    <table id="drugs-container"></table>
+  </div>
+
+
+  <script>
+
+    var global_results = []
+
+    function sortResults() {
+      global_results.diseases.sort(function(r1, r2) {
+        return r2.score - r1.score
+      })
+      global_results.drugs.sort(function(d1, d2) {
+        return d2.score - d1.score
+      })
+      clearResultsContainer()
+      displayResults(global_results)
+    }
+
+    function displayResults(results) {
+      var diseasesContainer = document.getElementById("diseases-container")
+      diseasesContainer.innerHTML += "<tr><th>Name</th><th>Score</th><th>Sources</th></tr>"
+      for (let d of results.diseases) {
+        diseasesContainer.innerHTML += `<tr><td>${d.name}</td><td>${d.score}</td><td>${d.sources}</td></tr>`
+      }
+
+      var drugsContainer = document.getElementById("drugs-container")
+      drugsContainer.innerHTML += "<tr><th>Name</th><th>Score</th><th>Sources</th></tr>"
+      for (let d of results.drugs) {
+        drugsContainer.innerHTML += `<tr><td>${d.name}</td><td>${d.score}</td><td>${d.sources}</td></tr>`
+      }
+    }
+
+    function clearResultsContainer() {
+      // Clear results container
+      document.getElementById("diseases-container").innerHTML = ''
+      document.getElementById("drugs-container").innerHTML = ''
+    }
+
+    function makeQuery() {
+      clearResultsContainer()
+      // Get query value
+      var query = document.getElementById('request-input').value
+      document.getElementById('loading-indicator').innerText = "Loading.."
+      fetch("http://localhost:8080/api/request?request="+query)
+      .then(function(result) { return result.json() })
+      .then(function(results) {
+        var query = document.getElementById('loading-indicator').innerText = ""
+        global_results = results // Save results globaly
+        displayResults(results)
+      })
+    }
+  </script>
+</html>

@@ -29,7 +29,7 @@ func TestQuery(t *testing.T) {
 
 func TestDiseasesFromIDs(t *testing.T) {
 
-	diseaseArray, err := getDiseasesFromIDs([]int{5, 46})
+	diseaseArray, err := GetDiseasesFromIDs([]float64{5, 46})
 
 	fmt.Println(len(diseaseArray), "results:")
 	for _, disease := range diseaseArray {

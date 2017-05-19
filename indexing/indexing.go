@@ -4,12 +4,39 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 
 	"github.com/artonge/Tamalou/Queries"
 	"github.com/blevesearch/bleve"
 	"github.com/blevesearch/bleve/document"
 )
 
+// InitIndex -
+func InitIndex(indexFile string) (bleve.Index, error) {
+	fmt.Println("Indexing " + indexFile + "...")
+	// Get path of the index file
+	pwd, err := os.Getwd()
+	if err != nil {
+		return nil, fmt.Errorf("Error while getting current working directory:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
+	}
+
+	// Remove the old index
+	err = os.RemoveAll(pwd + "/" + indexFile)
+	if err != nil {
+		return nil, fmt.Errorf("Error while removing old omim index:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
+	}
+
+	// Create a nex index file
+	mapping := bleve.NewIndexMapping()
+	index, err := bleve.New("omim-search.bleve", mapping)
+	if err != nil {
+		return nil, fmt.Errorf("Error while creating a new index for omim:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
+	}
+	fmt.Println("Done indexing " + indexFile)
+	return index, nil
+}
+
+// IndexDocs -
 func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
 	batch := index.NewBatch()
 	batchCount := 100
@@ -61,7 +88,7 @@ func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
 
 func SearchQuery(index bleve.Index, query Queries.ITamalouQuery, buildIndexable func(*document.Document) Indexable) ([]Indexable, error) {
 	strQuery := Queries.BuildIndexQuery(query)
-	indexQuery := bleve.NewMatchQuery(strQuery)
+	indexQuery := bleve.NewQueryStringQuery(strQuery)
 	search := bleve.NewSearchRequest(indexQuery)
 	searchResults, err := index.Search(search)
 	if err != nil {

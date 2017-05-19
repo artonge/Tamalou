@@ -50,8 +50,10 @@ func fetchDiseases(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 		return nil, err
 	}
 
+	results := make([]*Models.Disease, 0)
 	// Merge results
-	results := Models.Merge(resultsOrpha, resultsHPO, "or")
+	results = Models.Merge(results, resultsOrpha, "or")
+	results = Models.Merge(results, resultsHPO, "or")
 	results = Models.Merge(results, resultsOMIM, "or")
 	results = Models.Merge(results, resultsOrphaFromHPO, "or")
 	results = Models.Merge(results, resultsOMIMFromHPO, "or")

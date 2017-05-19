@@ -6,13 +6,14 @@ import (
 )
 
 type StitchNAtcStruct struct {
-	CompoundID string
-	ATC        string
-	label      string
+	ATCCode  string
+	ATCLabel string
+	Chemical string
+	Alias    string
 }
 
 func (me StitchNAtcStruct) GetID() string {
-	return me.CompoundID
+	return me.ATCCode
 }
 
 type KegDocument struct {
@@ -32,6 +33,23 @@ func BuildKegStructFromDoc(doc *document.Document) indexing.Indexable {
 			kegItem.ID = string(field.Value())
 		case "Name":
 			kegItem.Name = string(field.Value())
+		}
+	}
+	return nil
+}
+
+func BuildStitchNAtcStructFromDoc(doc *document.Document) indexing.Indexable {
+	var sitchItem StitchNAtcStruct
+	for _, field := range doc.Fields {
+		switch field.Name() {
+		case "ATCCode":
+			sitchItem.ATCCode = string(field.Value())
+		case "ATCLabel":
+			sitchItem.ATCLabel = string(field.Value())
+		case "Chemical":
+			sitchItem.Chemical = string(field.Value())
+		case "Alias":
+			sitchItem.Alias = string(field.Value())
 		}
 	}
 	return nil

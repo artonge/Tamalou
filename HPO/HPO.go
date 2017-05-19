@@ -7,6 +7,7 @@ import (
 	"github.com/artonge/Tamalou/Models"
 	"github.com/artonge/Tamalou/Queries"
 	"github.com/blevesearch/bleve"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var index bleve.Index
@@ -29,7 +30,7 @@ func init() {
 	fmt.Println("Obo file indexed.")
 }
 
-// Return array of diseases from the HPO databases
+// QueryHPO - Return array of diseases from the HPO databases
 func QueryHPO(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 	switch query.Type() {
 	case "or":
@@ -48,11 +49,11 @@ func QueryHPO(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 		}
 		return mergeDiseases, nil
 	default:
-		diseasesHP_IDs, err := QueryIndex(query)
+		diseasesHPIDs, err := QueryIndex(query)
 		if err != nil {
 			return nil, fmt.Errorf("Error in QueryHPO when querying the index: %v", err)
 		}
-		return SQLiteQuery(diseasesHP_IDs)
+		return SQLiteQuery(diseasesHPIDs)
 	}
 
 	return nil, nil

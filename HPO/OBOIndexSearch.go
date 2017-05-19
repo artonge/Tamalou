@@ -5,7 +5,7 @@ import (
 	"github.com/artonge/Tamalou/indexing"
 )
 
-// Query obo index
+// QueryIndex - obo index
 // Get IDs of terms matching the query (name or synonymes)
 func QueryIndex(query Queries.ITamalouQuery) ([]string, error) {
 	results, err := indexing.SearchQuery(index, query, BuildOboStructFromDoc)

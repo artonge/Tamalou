@@ -57,6 +57,7 @@ func filterDiseases(diseaseArray []*Models.Disease) []*Models.Disease {
 				// Increment Score of the disease
 				// ==> better score when the results comes from multiple sources
 				df.Score++
+				df.Sources = append(df.Sources, d.Sources...)
 				contains = true
 				break
 			}

@@ -54,6 +54,7 @@ func QueryOmimIndex(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 			tmpDisease.Name = r.(OmimStruct).FieldDeseaseName
 			tmpDisease.UMLSID = r.(OmimStruct).FieldCUI
 			tmpDisease.OMIMID = r.(OmimStruct).FieldNumber
+			tmpDisease.Sources = append(tmpDisease.Sources, "OMIM")
 			diseaseArray = append(diseaseArray, &tmpDisease)
 		}
 

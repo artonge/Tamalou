@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/artonge/Tamalou/Models"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 var db *sql.DB
@@ -61,6 +60,7 @@ func SQLiteQuery(diseasesIDs []string) ([]*Models.Disease, error) {
 		}
 
 		tmpDisease.Name = tmpHPOSQLiteStruct.DiseaseLabel
+		tmpDisease.Sources = append(tmpDisease.Sources, "HPO")
 		switch tmpHPOSQLiteStruct.DiseaseDB {
 		case "ORPHA":
 			value, err := strconv.ParseFloat(tmpHPOSQLiteStruct.DiseaseID, 64)

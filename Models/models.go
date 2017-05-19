@@ -7,7 +7,8 @@ type (
 		OMIMID  string
 		OrphaID float64
 		UMLSID  string
-		Score   int `json:"score"`
+		Score   int      `json:"score"`
+		Sources []string `json:"sources"`
 	}
 
 	// Drug - Global drug structure

@@ -7,7 +7,7 @@ import (
 
 func TestQueryMeddra(t *testing.T) {
 
-	results, err := QueryMeddra()
+	results, err := QueryMeddra("Abdominal pain OR Gastrointestinal pain AND anorexia")
 
 	if err != nil {
 		fmt.Println("Error in Sider Test : \n	==>", err, "\n	==>", results)

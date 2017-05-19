@@ -24,10 +24,10 @@ func init() {
 }
 
 // QueryMeddra ...
-func QueryMeddra() ([]*Meddra, error) {
+func QueryMeddra(inputStr string) ([]*Meddra, error) {
 	// Build query from required CS
 
-	fullQuery := Queries.BuildSiderQuery(" stitch_compound_id1 IN (SELECT stitch_compound_id1 FROM meddra_all_se WHERE side_effect_name =", Queries.ParseQuery("Abdominal pain OR Gastrointestinal pain AND anorexia"))
+	fullQuery := Queries.BuildSiderQuery(" stitch_compound_id1 IN (SELECT stitch_compound_id1 FROM meddra_all_se WHERE side_effect_name =", Queries.ParseQuery(inputStr))
 	fmt.Println(fullQuery)
 
 	rows, err := db.Query(fullQuery)

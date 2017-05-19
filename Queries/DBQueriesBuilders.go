@@ -1,6 +1,5 @@
 package Queries
 
-import "fmt"
 import "strconv"
 
 func BuildSiderQuery(template string, query ITamalouQuery) string {
@@ -39,10 +38,8 @@ func BuildSQLQuery(template string, query ITamalouQuery) string {
 	for _, child := range query.Children() {
 		switch child.Type() {
 		case "and", "or":
-			fmt.Println("Child type =>", child.Type())
 			fullQuery += "(" + BuildSQLQuery(template, child) + ")" + operator
 		default:
-			fmt.Println("Child type =>", child.Type())
 			fullQuery += BuildSQLQuery(template, child) + operator
 		}
 	}

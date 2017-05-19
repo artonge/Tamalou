@@ -27,14 +27,9 @@ func init() {
 func QueryMeddra() ([]*Meddra, error) {
 	// Build query from required CS
 
-	//fullQuery := "SELECT * FROM meddra WHERE " + Queries.BuildSQLQuery(query)
-	//fullQuery := Queries.BuildSQLQuery("SELECT * FROM meddra_all_se, meddra_freq WHERE meddra_all_se.stitch_compound_id1 = meddra_freq.stitch_compound_id1 AND meddra_all_se.side_effect_name=", Queries.ParseQuery("Abdominal pain OR Gastrointestinal pain"))
-	fullQuery := Queries.BuildSQLQuery("stitch_compound_id1 IN (SELECT stitch_compound_id1 FROM meddra_all_se WHERE side_effect_name =", Queries.ParseQuery("Abdominal pain OR Gastrointestinal pain"))
-	//fullQuery := "SELECT DISTINCT(meddra_freq.stitch_compound_id1), meddra_freq.cui FROM meddra_freq, ( SELECT * FROM meddra_all_se WHERE meddra_all_se.side_effect_name LIKE 'Abdominal pain' OR meddra_all_se.side_effect_name LIKE 'Gastrointestinal pain' AND meddra_all_se.stitch_compound_id1 IN ( SELECT meddra_all_se.stitch_compound_id1 FROM meddra_all_se WHERE meddra_all_se.side_effect_name LIKE 'anorexia' AND meddra_all_se.stitch_compound_id1 IN ( SELECT meddra_all_se.stitch_compound_id1 FROM meddra_all_se WHERE meddra_all_se.side_effect_name LIKE 'Arrhythmia')) ) as resid WHERE resid.stitch_compound_id1 = meddra_freq.stitch_compound_id1 AND resid.stitch_compound_id2 = meddra_freq.stitch_compound_id2 AND resid.cui = meddra_freq.cui "
-
+	fullQuery := Queries.BuildSiderQuery(" stitch_compound_id1 IN (SELECT stitch_compound_id1 FROM meddra_all_se WHERE side_effect_name =", Queries.ParseQuery("Abdominal pain OR Gastrointestinal pain AND anorexia"))
 	fmt.Println(fullQuery)
 
-	Make the query
 	rows, err := db.Query(fullQuery)
 	if err != nil {
 		return nil, fmt.Errorf("Error while querying sider (meddra): %v", err)
@@ -45,7 +40,7 @@ func QueryMeddra() ([]*Meddra, error) {
 
 	for rows.Next() {
 		tmpMeddra := new(Meddra)
-		err := rows.Scan(&tmpMeddra.CUI, &tmpMeddra.ConceptType, &tmpMeddra.MeddraID, &tmpMeddra.Label)
+		err := rows.Scan(&tmpMeddra.StitchCompoundId)
 		if err != nil {
 			return results, err
 		}

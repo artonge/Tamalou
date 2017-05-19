@@ -13,6 +13,7 @@ var index bleve.Index
 
 func init() {
 	var err error
+	fmt.Println("Indexing omim...")
 	index, err = indexing.InitIndex("omim-search.bleve")
 	if err != nil {
 		fmt.Println("Error while initing omim index:\n	Error ==> ", err)
@@ -22,6 +23,7 @@ func init() {
 	if err != nil {
 		fmt.Println("Error while indexing omim's csv:\n	Error ==> ", err)
 	}
+	fmt.Println("Omim index done")
 }
 
 // DiseasesFromIDs -
@@ -60,7 +62,7 @@ func QueryOmimIndex(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 		}
 		return mergeDiseases, nil
 	default:
-		results, err := indexing.SearchQuery(index, query, BuildOmimStructFromDoc)
+		results, err := indexing.QueryIndex(index, query, buildOmimStructFromDoc)
 		if err != nil {
 			return nil, fmt.Errorf("Error while querying omim's index\n	Error ==> %v", err)
 		}
@@ -69,9 +71,9 @@ func QueryOmimIndex(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 
 		for _, r := range results {
 			var tmpDisease Models.Disease
-			tmpDisease.Name = r.(OmimStruct).FieldDeseaseName
-			tmpDisease.UMLSID = r.(OmimStruct).FieldCUI
-			tmpDisease.OMIMID = r.(OmimStruct).FieldNumber
+			tmpDisease.Name = r.(omimStruct).FieldDeseaseName
+			tmpDisease.UMLSID = r.(omimStruct).FieldCUI
+			tmpDisease.OMIMID = r.(omimStruct).FieldNumber
 			tmpDisease.Sources = append(tmpDisease.Sources, "OMIM")
 			diseaseArray = append(diseaseArray, &tmpDisease)
 		}

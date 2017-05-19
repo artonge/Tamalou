@@ -5,7 +5,7 @@ import (
 	"github.com/blevesearch/bleve/document"
 )
 
-type OmimStruct struct {
+type omimStruct struct {
 	FieldNumber          string
 	FieldDeseaseName     string
 	FieldDescription     string
@@ -16,12 +16,13 @@ type OmimStruct struct {
 	FieldDiseaseSynonyms string
 }
 
-func (me OmimStruct) GetID() string {
+// GetID - To comply with the Indexable interface
+func (me omimStruct) GetID() string {
 	return me.FieldNumber
 }
 
-func BuildOmimStructFromDoc(doc *document.Document) indexing.Indexable {
-	me := OmimStruct{}
+func buildOmimStructFromDoc(doc *document.Document) indexing.Indexable {
+	me := omimStruct{}
 	for _, field := range doc.Fields {
 		val := field.Value()
 		switch field.Name() {

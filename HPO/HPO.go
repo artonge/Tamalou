@@ -2,32 +2,27 @@ package HPO
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/artonge/Tamalou/Models"
 	"github.com/artonge/Tamalou/Queries"
+	"github.com/artonge/Tamalou/indexing"
 	"github.com/blevesearch/bleve"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 var index bleve.Index
 
 func init() {
-	fmt.Println("Indexing obo file...")
-	pwd, err := os.Getwd()
-	fmt.Println(pwd)
+	var err error
+	fmt.Println("Indexing obo...")
+	index, err = indexing.InitIndex("obo-search.bleve")
 	if err != nil {
-		fmt.Println("Error while getting current working directory:\n Error ==> ", err, pwd)
+		fmt.Println("Error while initing obo index:\n	Error ==> ", err)
 	}
-	err = os.RemoveAll(pwd + "/obo-search.bleve")
+	err = indexOBO()
 	if err != nil {
-		fmt.Println("Error while removing old obo index:\n Error ==> ", err)
+		fmt.Println("Error while indexing obo:\n	Error ==> ", err)
 	}
-	index, err = indexOBO()
-	if err != nil {
-		fmt.Println("Error while indexing obo file:\n Error ==> ", err)
-	}
-	fmt.Println("Obo file indexed.")
+	fmt.Println("Obo index done")
 }
 
 // QueryHPO - Return array of diseases from the HPO databases

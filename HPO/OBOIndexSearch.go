@@ -8,7 +8,7 @@ import (
 // QueryIndex - obo index
 // Get IDs of terms matching the query (name or synonymes)
 func QueryIndex(query Queries.ITamalouQuery) ([]string, error) {
-	results, err := indexing.SearchQuery(index, query, BuildOboStructFromDoc)
+	results, err := indexing.QueryIndex(index, query, buildOboStructFromDoc)
 	if err != nil {
 		return nil, err
 	}

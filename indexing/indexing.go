@@ -3,7 +3,6 @@ package indexing
 import (
 	"fmt"
 	"io"
-	"log"
 	"os"
 
 	"github.com/artonge/Tamalou/Queries"
@@ -13,7 +12,6 @@ import (
 
 // InitIndex -
 func InitIndex(indexFile string) (bleve.Index, error) {
-	fmt.Println("Indexing " + indexFile + "...")
 	// Get path of the index file
 	pwd, err := os.Getwd()
 	if err != nil {
@@ -23,20 +21,20 @@ func InitIndex(indexFile string) (bleve.Index, error) {
 	// Remove the old index
 	err = os.RemoveAll(pwd + "/" + indexFile)
 	if err != nil {
-		return nil, fmt.Errorf("Error while removing old omim index:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
+		return nil, fmt.Errorf("Error while removing old index:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
 	}
 
 	// Create a nex index file
 	mapping := bleve.NewIndexMapping()
-	index, err := bleve.New("omim-search.bleve", mapping)
+	index, err := bleve.New(indexFile, mapping)
 	if err != nil {
-		return nil, fmt.Errorf("Error while creating a new index for omim:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
+		return nil, fmt.Errorf("Error while creating a new index:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
 	}
-	fmt.Println("Done indexing " + indexFile)
 	return index, nil
 }
 
-// IndexDocs -
+// IndexDocs - index some Docs
+// nextDoc allow you to parse your file progressivly
 func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
 	batch := index.NewBatch()
 	batchCount := 100
@@ -79,26 +77,28 @@ func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
 	if batchCount > 0 {
 		err := index.Batch(batch)
 		if err != nil {
-			log.Fatal(err)
+			return fmt.Errorf("Error while indexing batch:\n	Error ==> %v", err)
 		}
 	}
 
 	return nil
 }
 
-func SearchQuery(index bleve.Index, query Queries.ITamalouQuery, buildIndexable func(*document.Document) Indexable) ([]Indexable, error) {
+// QueryIndex - Make a query on the given index
+// Use the passed function to build the document into the wished struct
+func QueryIndex(index bleve.Index, query Queries.ITamalouQuery, buildIndexable func(*document.Document) Indexable) ([]Indexable, error) {
 	strQuery := Queries.BuildIndexQuery(query)
 	indexQuery := bleve.NewQueryStringQuery(strQuery)
 	search := bleve.NewSearchRequest(indexQuery)
 	searchResults, err := index.Search(search)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Error querying index\n	Error ==> %v\n	Index ==> %v", err, index)
 	}
 	var results []Indexable
 	for _, hit := range searchResults.Hits {
 		doc, err := index.Document(hit.ID)
 		if err != nil {
-			log.Fatal(err)
+			return nil, fmt.Errorf("Error building indexable\n	Error ==> %v\n	Index ==> %v", err, index)
 		}
 		results = append(results, buildIndexable(doc))
 	}

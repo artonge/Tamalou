@@ -2,7 +2,7 @@ package Models
 
 import "fmt"
 
-// Merge to array of Diseases
+// Merge - Merge two arrays of Diseases
 // Support "or" and "and" logic operator
 func Merge(list1 []*Disease, list2 []*Disease, operator string) []*Disease {
 	switch operator {
@@ -16,7 +16,7 @@ func Merge(list1 []*Disease, list2 []*Disease, operator string) []*Disease {
 	}
 }
 
-// Merge two Stringer list with the 'and' operator
+// Merge two Disease list with the 'and' operator
 func andMerge(list1 []*Disease, list2 []*Disease) []*Disease {
 	var mergeResult []*Disease
 	// Put all item of list1 contained in list2 in mergeResult
@@ -50,7 +50,7 @@ func andMerge(list1 []*Disease, list2 []*Disease) []*Disease {
 	return mergeResult
 }
 
-// Merge two Stringer list with the 'or' operator
+// Merge two Disease list with the 'or' operator
 func orMerge(list1 []*Disease, list2 []*Disease) []*Disease {
 	var mergeResult []*Disease
 	// Put all item of list1 in mergeResult

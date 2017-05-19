@@ -35,12 +35,12 @@ func indexOmim() error {
 
 // ParseOmimCsv parse Omim_onto.csv
 // @return a map with the FieldNumber in key
-func parseOmimCsv() (map[string]OmimStruct, error) {
+func parseOmimCsv() (map[string]omimStruct, error) {
 	omimCsvFile, err := os.Open("datas/omim/omim_onto.csv")
 	if err != nil {
 		return nil, err
 	}
-	dicCsv := make(map[string]OmimStruct)
+	dicCsv := make(map[string]omimStruct)
 	reader := bufio.NewReader(omimCsvFile)
 	headLine, err := reader.ReadString('\n') // first line
 	if err != nil {
@@ -88,7 +88,7 @@ func parseOmimCsv() (map[string]OmimStruct, error) {
 			return nil, err
 		}
 		id := finalValues[0][len(fields[0])-6:]
-		doc := OmimStruct{
+		doc := omimStruct{
 			FieldNumber:          id,
 			FieldDeseaseName:     finalValues[1],
 			FieldObsolete:        finalValues[4] == "true",
@@ -101,8 +101,8 @@ func parseOmimCsv() (map[string]OmimStruct, error) {
 	return dicCsv, nil
 }
 
-func nextTerm(reader *bufio.Reader, dicCsv map[string]OmimStruct) (*OmimStruct, error) {
-	var document OmimStruct
+func nextTerm(reader *bufio.Reader, dicCsv map[string]omimStruct) (*omimStruct, error) {
+	var document omimStruct
 	var currentField, data string
 	for {
 		line, err := reader.ReadString('\n')

@@ -13,7 +13,7 @@ import (
 	couchdb "github.com/rhinoman/couchdb-go"
 )
 
-var DB *couchdb.Database
+var db *couchdb.Database
 
 // Init CouchDB connection
 func init() {
@@ -27,7 +27,7 @@ func init() {
 		log.Fatal("Error in Orpha DB init:\n	==> ", err)
 	}
 
-	DB = conn.SelectDB("orphadatabase", nil)
+	db = conn.SelectDB("orphadatabase", nil)
 }
 
 // Query - Fetch all diceases for the given ITamalouQuery
@@ -64,7 +64,7 @@ func Query(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 // Interface to the'getDiseaseByClinicalSign' view of the DB
 // Supports wild cards (*)
 func getDiseaseByClinicalSign(clinicalSign string) ([]*Models.Disease, error) {
-	queryResults := ViewResponse{}
+	queryResults := viewResponse{}
 	var params url.Values
 	// Add quotes around the sign for json format
 	formatedClinicalSign := "\"" + clinicalSign + "\""
@@ -84,7 +84,7 @@ func getDiseaseByClinicalSign(clinicalSign string) ([]*Models.Disease, error) {
 	}
 
 	// Make the request to couchDB
-	err := DB.GetView("clinicalsigns", "GetDiseaseByClinicalSign", &queryResults, &params)
+	err := db.GetView("clinicalsigns", "GetDiseaseByClinicalSign", &queryResults, &params)
 	if err != nil {
 		return nil, fmt.Errorf("Error while Querying Orpha:\n	==>  %v", err)
 	}
@@ -115,8 +115,8 @@ func GetDiseasesFromIDs(diseasesIDs []float64) ([]*Models.Disease, error) {
 	params := url.Values{"keys": []string{string(IDList)}}
 
 	// Make the request to couchDB
-	queryResults := ViewResponse{}
-	err = DB.GetView("diseases", "GetDiseases", &queryResults, &params)
+	queryResults := viewResponse{}
+	err = db.GetView("diseases", "GetDiseases", &queryResults, &params)
 	if err != nil {
 		return nil, fmt.Errorf("Error while Querying Orpha:\n	==>  %v", err)
 	}

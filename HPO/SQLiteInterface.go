@@ -6,6 +6,8 @@ import (
 	"strconv"
 
 	"github.com/artonge/Tamalou/Models"
+	// Import SQLite drivers
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var db *sql.DB
@@ -47,7 +49,7 @@ func SQLiteQuery(diseasesIDs []string) ([]*Models.Disease, error) {
 
 	// Parse rows
 	for rows.Next() {
-		tmpHPOSQLiteStruct := new(HPOSQLiteStruct)
+		tmpHPOSQLiteStruct := new(hpoSQLiteStruct)
 		tmpDisease := new(Models.Disease)
 		err = rows.Scan(
 			&tmpHPOSQLiteStruct.DiseaseDB,

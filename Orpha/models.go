@@ -36,14 +36,14 @@ type (
 
 // CouchDB structs
 type (
-	ViewResponse struct {
+	viewResponse struct {
 		TotalRows int          `json:"total_rows"`
 		Offset    int          `json:"offset"`
-		Rows      []ViewResult `json:"rows,omitempty"`
+		Rows      []viewResult `json:"rows,omitempty"`
 	}
 
-	ViewResult struct {
-		Id    string                 `json:"id"`
+	viewResult struct {
+		ID    string                 `json:"id"`
 		Key   interface{}            `json:"key"`
 		Value map[string]interface{} `json:"value"`
 	}
@@ -55,7 +55,7 @@ type (
 	// }
 )
 
-func (result *ViewResult) String() string {
+func (result *viewResult) String() string {
 	return result.Value["disease"].(map[string]interface{})["Name"].(map[string]interface{})["text"].(string)
 }
 

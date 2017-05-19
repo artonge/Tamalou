@@ -8,21 +8,13 @@ import (
 	"strings"
 
 	"github.com/artonge/Tamalou/indexing"
-	"github.com/blevesearch/bleve"
 )
 
-func indexOBO() (bleve.Index, error) {
-	// Create the index if it doesn't exist
-	mapping := bleve.NewIndexMapping()
-	index, err := bleve.New("obo-search.bleve", mapping)
-	if err != nil {
-		return index, fmt.Errorf("Error while creating a new index for obo: %v", err)
-	}
-
+func indexOBO() error {
 	// Open the obo file
 	file, err := os.Open("datas/hpo/hp.obo")
 	if err != nil {
-		return index, fmt.Errorf("Error in HPO's obo connector init\n	Error	==> %v", err)
+		return fmt.Errorf("Error in HPO's obo connector init\n	Error	==> %v", err)
 
 	}
 	// Create a new Scanner to parse the file
@@ -32,11 +24,11 @@ func indexOBO() (bleve.Index, error) {
 		return nextTerm(scanner)
 	})
 
-	return index, err
+	return err
 }
 
 // Return the next term
-func nextTerm(scanner *bufio.Scanner) (*HPOOBOStruct, error) {
+func nextTerm(scanner *bufio.Scanner) (*hpoOBOStruct, error) {
 	// Go to the next [Term]
 	for scanner.Scan() {
 		if scanner.Text() == "[Term]" {
@@ -45,7 +37,7 @@ func nextTerm(scanner *bufio.Scanner) (*HPOOBOStruct, error) {
 	}
 
 	// Init the new term
-	term := new(HPOOBOStruct)
+	term := new(hpoOBOStruct)
 
 	// Continue the file parsing from the last position
 	for scanner.Scan() {

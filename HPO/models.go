@@ -7,14 +7,14 @@ import (
 	"github.com/blevesearch/bleve/document"
 )
 
-type HPOSQLiteStruct struct {
+type hpoSQLiteStruct struct {
 	DiseaseDB    string
 	DiseaseID    string
 	DiseaseLabel string
 	SignID       string
 }
 
-type HPOOBOStruct struct {
+type hpoOBOStruct struct {
 	ID         string
 	AltIDs     []string
 	Name       string
@@ -27,12 +27,13 @@ type HPOOBOStruct struct {
 	count      int
 }
 
-func (obo HPOOBOStruct) GetID() string {
+// GetID - To comply with the Indexable interface
+func (obo hpoOBOStruct) GetID() string {
 	return obo.ID
 }
 
-func BuildOboStructFromDoc(doc *document.Document) indexing.Indexable {
-	var term HPOOBOStruct
+func buildOboStructFromDoc(doc *document.Document) indexing.Indexable {
+	var term hpoOBOStruct
 	for _, field := range doc.Fields {
 		val := field.Value()
 		switch field.Name() {

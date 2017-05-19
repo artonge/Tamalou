@@ -11,7 +11,9 @@ import (
 	"github.com/blevesearch/bleve/document"
 )
 
+// InitIndex -
 func InitIndex(indexFile string) (bleve.Index, error) {
+	fmt.Println("Indexing " + indexFile + "...")
 	// Get path of the index file
 	pwd, err := os.Getwd()
 	if err != nil {
@@ -30,10 +32,11 @@ func InitIndex(indexFile string) (bleve.Index, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Error while creating a new index for omim:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
 	}
-
+	fmt.Println("Done indexing " + indexFile)
 	return index, nil
 }
 
+// IndexDocs -
 func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
 	batch := index.NewBatch()
 	batchCount := 100

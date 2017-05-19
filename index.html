@@ -8,8 +8,12 @@
   <button onclick="makeQuery()">Fetch !</button>
   <button onclick="sortResults()">Sort by score</button>
   <div id="loading-indicator"></div>
+  <div id="request-container"></div>
 
-  <table id="results-container"></table>
+  <div id="results-container">
+    <table id="diseases-container"></table>
+    <table id="drugs-container"></table>
+  </div>
 
 
   <script>
@@ -17,24 +21,34 @@
     var global_results = []
 
     function sortResults() {
-      global_results = global_results.sort(function(r1, r2) {
-        return r1.score - r2.score
+      global_results.diseases.sort(function(r1, r2) {
+        return r2.score - r1.score
       })
+      global_results.drugs.sort(function(d1, d2) {
+        return d2.score - d1.score
+      })
+      clearResultsContainer()
       displayResults(global_results)
     }
 
     function displayResults(results) {
-      var elem = document.getElementById("results-container")
-      elem.innerHTML += "<tr><th>Name</th><th>Score</th><th>Sources</th></tr>"
+      var diseasesContainer = document.getElementById("diseases-container")
+      diseasesContainer.innerHTML += "<tr><th>Name</th><th>Score</th><th>Sources</th></tr>"
       for (let d of results.diseases) {
-        elem.innerHTML += `<tr><td>${d.name}</td><td>${d.score}</td><td>${d.sources}</td></tr>`
+        diseasesContainer.innerHTML += `<tr><td>${d.name}</td><td>${d.score}</td><td>${d.sources}</td></tr>`
+      }
+
+      var drugsContainer = document.getElementById("drugs-container")
+      drugsContainer.innerHTML += "<tr><th>Name</th><th>Score</th><th>Sources</th></tr>"
+      for (let d of results.drugs) {
+        drugsContainer.innerHTML += `<tr><td>${d.name}</td><td>${d.score}</td><td>${d.sources}</td></tr>`
       }
     }
 
     function clearResultsContainer() {
       // Clear results container
-      var elem = document.getElementById("results-container")
-      elem.innerHTML = ''
+      document.getElementById("diseases-container").innerHTML = ''
+      document.getElementById("drugs-container").innerHTML = ''
     }
 
     function makeQuery() {

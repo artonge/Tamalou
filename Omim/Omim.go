@@ -24,6 +24,24 @@ func init() {
 	}
 }
 
+// DiseasesFromIDs -
+func DiseasesFromIDs(OMIMIDs []string) ([]*Models.Disease, error) {
+	var idQueries []Queries.ITamalouQuery
+	for _, id := range OMIMIDs {
+		idQueries = append(idQueries, Queries.NewTamalouQuery("id", id, nil))
+	}
+
+	query := Queries.NewTamalouQuery("or", "", idQueries)
+
+	results, err := QueryOmimIndex(query)
+	if err != nil {
+		return nil, fmt.Errorf("Error querying omim with OMIM IDs\n	Error ==> %v", err)
+	}
+
+	return results, nil
+}
+
+// QueryOmimIndex -
 func QueryOmimIndex(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 	switch query.Type() {
 	case "or":

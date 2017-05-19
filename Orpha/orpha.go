@@ -105,9 +105,9 @@ func getDiseaseByClinicalSign(clinicalSign string) ([]*Models.Disease, error) {
 	return diseasesArray, err
 }
 
-// Interface to the'getDisease' view of the DB
+// GetDiseasesFromIDs - Interface to the'getDisease' view of the DB
 // Return the diseases informations from their IDs
-func getDiseasesFromIDs(diseasesIDs []int) ([]*Models.Disease, error) {
+func GetDiseasesFromIDs(diseasesIDs []float64) ([]*Models.Disease, error) {
 	// Build ID json array
 	IDList, err := json.Marshal(diseasesIDs)
 	if err != nil {

@@ -4,15 +4,9 @@ import (
 	"github.com/artonge/Tamalou/HPO"
 	"github.com/artonge/Tamalou/Models"
 	"github.com/artonge/Tamalou/Omim"
-	orpha "github.com/artonge/Tamalou/Orpha"
+	"github.com/artonge/Tamalou/Orpha"
 	"github.com/artonge/Tamalou/Queries"
-	"github.com/mkideal/cli"
 )
-
-type argT struct {
-	cli.Helper
-	Query string `cli:"q,query" usage:"ventre AND tete OR hand"`
-}
 
 func main() {
 	// startCLI()
@@ -36,10 +30,12 @@ func fetchDiseases(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Merge results
 	results := Models.Merge(resultsOrpha, resultsHPO, "or")
 	results = Models.Merge(results, resultsOMIM, "or")
-	// ---
 
+	// Return filtered results (remove double apparition)
 	return filterDiseases(results), nil
 }
 
@@ -58,6 +54,9 @@ func filterDiseases(diseaseArray []*Models.Disease) []*Models.Disease {
 		contains := false
 		for _, df := range filteredDiseases {
 			if d.Name == df.Name {
+				// Increment Score of the disease
+				// ==> better score when the results comes from multiple sources
+				df.Score++
 				contains = true
 				break
 			}

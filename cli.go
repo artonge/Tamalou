@@ -5,9 +5,13 @@ import (
 	"github.com/mkideal/cli"
 )
 
+type argT struct {
+	cli.Helper
+	Query string `cli:"q,query" usage:"ventre AND tete OR hand"`
+}
+
 func startCLI() {
 	cli.Run(new(argT), func(ctx *cli.Context) error {
-
 		argv := ctx.Argv().(*argT)
 		query := Queries.ParseQuery(argv.Query)
 

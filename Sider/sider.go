@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 
 	// Import MySQL river
 
@@ -23,18 +24,54 @@ func init() {
 	}
 }
 
+func QueryMeddraFreq(compoundIds []*Meddra, clinicalSigns []string) ([]*Meddra, error) {
+	var clinicalSignsSql = ""
+	for _, value := range clinicalSigns {
+		value = strings.TrimLeft(value, " ")
+		value = strings.TrimRight(value, " ")
+		clinicalSignsSql += "WHEN meddra_freq.side_effect_name LIKE '" + value + "' THEN 1\n"
+	}
+
+	var currentQuery = ""
+	var totalTreated = 0
+	for _, compoundId := range compoundIds {
+		currentQuery = "SELECT DISTINCT(meddra_freq.side_effect_name), meddra_freq.placebo, meddra_freq.frequency_description, meddra_freq.freq_lower_bound, meddra_freq.freq_upper_bound, (CASE " + clinicalSignsSql
+		currentQuery += "ELSE 0 END) as matched FROM meddra_freq WHERE meddra_freq.stitch_compound_id1 = '" + compoundId.StitchCompoundId + "'"
+
+		rows, err := db.Query(currentQuery)
+		if err != nil {
+			return nil, fmt.Errorf("Error while querying sider (meddra): %v", err)
+		}
+		defer rows.Close()
+		compoundId.SideEffects = make([]*SideEffect, 0, 100)
+
+		for rows.Next() {
+			totalTreated += 1
+			tmpMeddra := new(SideEffect)
+			err := rows.Scan(&tmpMeddra.SideEffectName, &tmpMeddra.Placebo, &tmpMeddra.Frequency, &tmpMeddra.FrequencyLowerBound, &tmpMeddra.FrequencyLowerBound, &tmpMeddra.FrequencyUpperBound, &tmpMeddra.Matched)
+			if err != nil {
+				return compoundIds, err
+			}
+			compoundId.SideEffects = append(compoundId.SideEffects, tmpMeddra)
+		}
+	}
+
+	fmt.Println("Rows treated =>>", totalTreated)
+
+	return compoundIds, nil
+}
+
 func QueryMeddraTree(query Queries.ITamalouQuery) ([]*Meddra, error) {
 	// Build query from required CS
 
-	fullQuery := Queries.BuildSiderQuery(" stitch_compound_id1 IN (SELECT stitch_compound_id1 FROM meddra_all_se WHERE side_effect_name =", query)
-	fmt.Println(fullQuery)
+	fullQuery := Queries.BuildSiderQuery(" stitch_compound_id1 IN (SELECT stitch_compound_id1 FROM meddra_all_se WHERE side_effect_name LIKE", query)
+	fmt.Println("FullQuery =>> ", fullQuery)
 
 	rows, err := db.Query(fullQuery)
 	if err != nil {
 		return nil, fmt.Errorf("Error while querying sider (meddra): %v", err)
 	}
 	defer rows.Close()
-	fmt.Println(rows.Columns())
 	var results = make([]*Meddra, 0, 100)
 
 	for rows.Next() {
@@ -52,15 +89,14 @@ func QueryMeddraTree(query Queries.ITamalouQuery) ([]*Meddra, error) {
 func QueryMeddraStr(inputStr string) ([]*Meddra, error) {
 	// Build query from required CS
 
-	fullQuery := Queries.BuildSiderQuery(" stitch_compound_id1 IN (SELECT stitch_compound_id1 FROM meddra_all_se WHERE side_effect_name =", Queries.ParseQuery(inputStr))
-	fmt.Println(fullQuery)
+	fullQuery := Queries.BuildSiderQuery(" stitch_compound_id1 IN (SELECT stitch_compound_id1 FROM meddra_all_se WHERE side_effect_name LIKE ", Queries.ParseQuery(inputStr))
+	fmt.Println("FullQuery =>> ", fullQuery)
 
 	rows, err := db.Query(fullQuery)
 	if err != nil {
 		return nil, fmt.Errorf("Error while querying sider (meddra): %v", err)
 	}
 	defer rows.Close()
-	fmt.Println(rows.Columns())
 	var results = make([]*Meddra, 0, 100)
 
 	for rows.Next() {

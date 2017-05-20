@@ -2,13 +2,17 @@ package Queries
 
 import "strconv"
 
+// func BuildSiderFreqQuery() string {
+//
+// }
+
 func BuildSiderQuery(template string, query ITamalouQuery) string {
 	var (
 		body1 string
 		body2 string
 	)
 	body1 = "SELECT DISTINCT(meddra_freq.stitch_compound_id1) FROM meddra_freq,( SELECT DISTINCT(meddra_all_se.stitch_compound_id1), stitch_compound_id2, cui FROM meddra_all_se WHERE"
-	body2 = ") as resid WHERE resid.stitch_compound_id1 = meddra_freq.stitch_compound_id1 AND resid.stitch_compound_id2 = meddra_freq.stitch_compound_id2 AND resid.cui = meddra_freq.cui GROUP BY meddra_freq.stitch_compound_id1 LIMIT 100"
+	body2 = ") as resid WHERE resid.stitch_compound_id1 = meddra_freq.stitch_compound_id1 AND resid.stitch_compound_id2 = meddra_freq.stitch_compound_id2 AND resid.cui = meddra_freq.cui GROUP BY meddra_freq.stitch_compound_id1"
 	return body1 + BuildSQLQuery(template, query) + body2
 }
 

@@ -7,20 +7,36 @@ import (
 	"github.com/artonge/Tamalou/Queries"
 )
 
-func TestQueryMeddra(t *testing.T) {
+var rawQuery = "Abdominal pain OR Gastrointestinal pain AND anorexia"
 
-	results, err := QueryMeddraStr("Abdominal pain OR Gastrointestinal pain AND anorexia")
+func TestQueryMeddraStr(t *testing.T) {
 
-	tree := Queries.ParseQuery("Abdominal pain OR Gastrointestinal pain AND anorexia")
+	results, err := QueryMeddraStr(rawQuery)
+	if err != nil {
+		fmt.Println("Error in Sider Test : \n	==>", err, "\n	==>", results)
+		t.Fail()
+	}
+}
 
-	results, err = QueryMeddraTree(tree)
+func TestQueryMeddraTree(t *testing.T) {
+
+	tree := Queries.ParseQuery(rawQuery)
+	clinicalSigns := Queries.GetClinicalSigns(rawQuery)
+	results, err := QueryMeddraTree(tree)
+
+	fmt.Println("Got ", len(results), " results")
+
+	// Get frequency from all ids
+	results, err = QueryMeddraFreq(results, clinicalSigns)
 
 	if err != nil {
 		fmt.Println("Error in Sider Test : \n	==>", err, "\n	==>", results)
 		t.Fail()
 	}
 
-	fmt.Println("Results: ", len(results))
+	// for index, result := range results {
+	// 	fmt.Println("Result: ", index, " =>> ", result.StitchCompoundId)
+	// }
 }
 
 // func TestQueryMeddraAllIndications(t *testing.T) {

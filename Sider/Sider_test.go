@@ -3,11 +3,17 @@ package sider
 import (
 	"fmt"
 	"testing"
+
+	"github.com/artonge/Tamalou/Queries"
 )
 
 func TestQueryMeddra(t *testing.T) {
 
-	results, err := QueryMeddra("Abdominal pain OR Gastrointestinal pain AND anorexia")
+	results, err := QueryMeddraStr("Abdominal pain OR Gastrointestinal pain AND anorexia")
+
+	tree := Queries.ParseQuery("Abdominal pain OR Gastrointestinal pain AND anorexia")
+
+	results, err = QueryMeddraTree(tree)
 
 	if err != nil {
 		fmt.Println("Error in Sider Test : \n	==>", err, "\n	==>", results)

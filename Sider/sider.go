@@ -23,8 +23,33 @@ func init() {
 	}
 }
 
+func QueryMeddraTree(query Queries.ITamalouQuery) ([]*Meddra, error) {
+	// Build query from required CS
+
+	fullQuery := Queries.BuildSiderQuery(" stitch_compound_id1 IN (SELECT stitch_compound_id1 FROM meddra_all_se WHERE side_effect_name =", query)
+	fmt.Println(fullQuery)
+
+	rows, err := db.Query(fullQuery)
+	if err != nil {
+		return nil, fmt.Errorf("Error while querying sider (meddra): %v", err)
+	}
+	defer rows.Close()
+	fmt.Println(rows.Columns())
+	var results = make([]*Meddra, 0, 100)
+
+	for rows.Next() {
+		tmpMeddra := new(Meddra)
+		err := rows.Scan(&tmpMeddra.StitchCompoundId)
+		if err != nil {
+			return results, err
+		}
+		results = append(results, tmpMeddra)
+	}
+	return results, nil
+}
+
 // QueryMeddra ...
-func QueryMeddra(inputStr string) ([]*Meddra, error) {
+func QueryMeddraStr(inputStr string) ([]*Meddra, error) {
 	// Build query from required CS
 
 	fullQuery := Queries.BuildSiderQuery(" stitch_compound_id1 IN (SELECT stitch_compound_id1 FROM meddra_all_se WHERE side_effect_name =", Queries.ParseQuery(inputStr))

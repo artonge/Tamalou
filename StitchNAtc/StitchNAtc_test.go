@@ -1,33 +1,43 @@
 package stitchnatc
 
 import (
-	"encoding/csv"
-	"fmt"
+	"bufio"
 	"log"
 	"os"
-	"reflect"
 	"testing"
+
+	"github.com/artonge/Tamalou/indexing"
+	"github.com/blevesearch/bleve"
 )
 
 func TestStitchNAtc(t *testing.T) {
+	// Create the index if it doesn't exist
+	mapping := bleve.NewIndexMapping()
+	index, err := bleve.New("stitchnatc-search.bleve", mapping)
+	if err != nil {
+		os.RemoveAll("stitchnatc-search.bleve")
+		index, err = bleve.New("stitchnatc-search.bleve", mapping)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	dicKeg, err := parseKeg()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Open the tsv file
 	file, err := os.Open("/media/carl/DATA/Downloads/chemical.sources.v5.0.tsv/chemical.sources.v5.0.tsv")
 	if err != nil {
 		log.Fatal(err)
 	}
-	reader := csv.NewReader(file)
-	reader.Comma = '\t'
-	reader.Comment = '#'
-	for i := 0; i < 10; i++ {
-		line, err := reader.Read()
-		fmt.Println(reflect.TypeOf(err))
-		if err != nil {
-			switch err {
-			case csv.ParseError:
-				fmt.Print("it works")
-			default:
-				fmt.Println("hahahaha")
-			}
-		}
-		fmt.Println(line, err)
+	// Create a new Reader to parse the file
+	reader := bufio.NewReader(file)
+	reader.ReadString('\n')
+	err = indexing.IndexDocs(index, func() (indexing.Indexable, error) {
+		return nextTerm(reader, dicKeg)
+	})
+	if err != nil {
+		log.Fatal(err)
 	}
 }

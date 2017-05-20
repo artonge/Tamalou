@@ -27,9 +27,9 @@ func TestParseQuery(t *testing.T) {
 
 func TestBuildSQLQuery(t *testing.T) {
 
-	SQLQuery := BuildSQLQuery(ParseQuery("Anaemie"))
-
+	SQLQuery := BuildSQLQuery("SELECT * FROM meddra_all_se, meddra_freq WHERE meddra_all_se.stitch_compound_id1 = meddra_freq.stitch_compound_id1 AND meddra_all_se.side_effect_name=", ParseQuery("Anaemie OR Abdomen acute"))
 	if SQLQuery != "symptom='Anaemie'" {
+
 		fmt.Println("query: ", SQLQuery)
 		t.Fail()
 	}

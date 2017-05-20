@@ -2,10 +2,7 @@ package sider
 
 type (
 	Meddra struct {
-		CUI         string
-		ConceptType string
-		MeddraID    int
-		Label       string
+		StitchCompoundId string
 	}
 
 	MeddraAllIndications struct {

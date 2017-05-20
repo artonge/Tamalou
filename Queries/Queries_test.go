@@ -39,3 +39,8 @@ func TestBuildIndexQuery(t *testing.T) {
 	indexQuery := BuildIndexQuery(ParseQuery("Anaemie"))
 	fmt.Println(indexQuery)
 }
+
+func TestGetClinicalSigns(t *testing.T) {
+	GetClinicalSigns("Anaemie OR Abdomen acute")
+
+}

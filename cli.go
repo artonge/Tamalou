@@ -14,7 +14,6 @@ import (
 func startCLI() {
 	if err := cli.Root(tamalouCMD,
 		cli.Tree(help),
-		cli.Tree(requestCMD),
 		cli.Tree(indexCMD),
 		cli.Tree(serverCMD),
 	).Run(os.Args[1:]); err != nil {
@@ -28,7 +27,8 @@ var help = cli.HelpCommand("display help information")
 // root command
 type tamalouCMDT struct {
 	cli.Helper
-	Name string `cli:"tamalou" usage:"[index, request]"`
+	Name  string `cli:"tamalou" usage:"[index, request]"`
+	Query string `cli:"q,query" usage:"ventre AND tete OR hand"`
 }
 
 var tamalouCMD = &cli.Command{
@@ -38,25 +38,7 @@ var tamalouCMD = &cli.Command{
 	Argv: func() interface{} { return new(tamalouCMDT) },
 	Fn: func(ctx *cli.Context) error {
 		argv := ctx.Argv().(*tamalouCMDT)
-		ctx.String("Hello, root command, I am %s\n", argv.Name)
-		return nil
-	},
-}
-
-// child command
-type requestCMDT struct {
-	cli.Helper
-	Name string `cli:"request" usage:"symptom1 AND sumptom2 OR symptom3"`
-}
-
-var requestCMD = &cli.Command{
-	Name: "request",
-	Desc: "this is the request command",
-	Argv: func() interface{} { return new(requestCMDT) },
-	Fn: func(ctx *cli.Context) error {
-		argv := ctx.Args()
-		fmt.Println(argv)
-		query := Queries.ParseQuery(argv[0])
+		query := Queries.ParseQuery(argv.Query)
 
 		diseases, err := fetchDiseases(query)
 		if err != nil {

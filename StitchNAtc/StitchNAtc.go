@@ -28,7 +28,7 @@ func IndexStitchNAtc() error {
 	if err != nil {
 		return fmt.Errorf("Error while initing stitchnatc index:\n	Error ==> %v", err)
 	}
-	index, err = indexStitchNAtc()
+	err = indexStitchNAtc()
 	if err != nil {
 		return fmt.Errorf("Error while indexing stitch & atc file:\n Error ==> %v", err)
 	}

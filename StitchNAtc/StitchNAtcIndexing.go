@@ -8,28 +8,21 @@ import (
 	"strings"
 
 	"github.com/artonge/Tamalou/indexing"
-	"github.com/blevesearch/bleve"
 )
 
-func indexStitchNAtc() (bleve.Index, error) {
+func indexStitchNAtc() error {
 	// Create the index if it doesn't exist
-	mapping := bleve.NewIndexMapping()
-	index, err := bleve.New("stitchnatc-search.bleve", mapping)
-	if err != nil {
-		return index, fmt.Errorf("Error while creating a new index for stitch & atc: %v", err)
-	}
-
 	dicKeg, err := parseKeg()
 	if err != nil {
 		if err != io.EOF {
-			return index, fmt.Errorf("Error while parsing the file br08303.keg: %v", err)
+			return fmt.Errorf("Error while parsing the file br08303.keg: %v", err)
 		}
 	}
 	// Open the tsv file
 	// file, err := os.Open("/media/carl/DATA/Downloads/chemical.sources.v5.0.tsv/chemical.sources.v5.0.tsv")
 	file, err := os.Open("datas/chemical.sources.v5.0.tsv")
 	if err != nil {
-		return index, fmt.Errorf("Error in Stitch&ATC's connector init\n	Error	==> %v", err)
+		return fmt.Errorf("Error in Stitch&ATC's connector init\n	Error	==> %v", err)
 	}
 	// Create a new Reader to parse the file
 	reader := bufio.NewReader(file)
@@ -42,7 +35,7 @@ func indexStitchNAtc() (bleve.Index, error) {
 		}
 	})
 
-	return index, err
+	return err
 }
 
 func nextTerm(reader *bufio.Reader, dicStitch map[string]StitchNAtcStruct) (*StitchNAtcStruct, error) {

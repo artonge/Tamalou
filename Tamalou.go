@@ -73,8 +73,6 @@ func fetchDrugs(query Queries.ITamalouQuery) ([]*Models.Drug, error) {
 	}
 	stitchnatc.GetChemicalFromID(drugs)
 
-	// Should call indexes and get drugs names before putting it in results
-
 	return drugs, nil
 }
 

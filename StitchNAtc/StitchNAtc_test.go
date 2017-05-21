@@ -11,12 +11,14 @@ import (
 func TestStitchNAtc(t *testing.T) {
 	var drugArray []*Models.Drug
 	drug := new(Models.Drug)
-	drug.STITCH_ID_SIDER = "CID100000085"
+	drug.STITCH_ID_SIDER = "CID125880656"
 	//stitchIDs := []string{"CID100000085"}
 	drugArray = append(drugArray, drug)
-	err := GetChemicalFromID(drugArray)
+	err := GetChemicalsFromIds(drugArray)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(drugArray)
+	for _, item := range drugArray {
+		fmt.Println("Item ", item.Name)
+	}
 }

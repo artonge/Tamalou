@@ -40,16 +40,19 @@ func StitchIdSider2ATC(str string) string {
 	return str[:3] + "m" + str[4:]
 }
 
-func GetChemicalFromID(drugs []*Models.Drug) error {
-	var queryString string
+func GetChemicalsFromIds(drugs []*Models.Drug) error {
 	for _, drug := range drugs {
-		drug.STITCH_ID_ATC = StitchIdSider2ATC(drug.STITCH_ID_SIDER)
-		if queryString == "" {
-			queryString = drug.STITCH_ID_ATC
-		} else {
-			queryString += " " + drug.STITCH_ID_ATC
+		err := GetChemicalFromID(drug)
+		if err != nil {
+			return err
 		}
 	}
+	return nil
+}
+
+func GetChemicalFromID(drug *Models.Drug) error {
+	drug.STITCH_ID_ATC = StitchIdSider2ATC(drug.STITCH_ID_SIDER)
+	var queryString string = drug.STITCH_ID_ATC
 	indexQuery := bleve.NewQueryStringQuery(queryString)
 	search := bleve.NewSearchRequest(indexQuery)
 	searchResults, err := index.Search(search)
@@ -66,25 +69,16 @@ func GetChemicalFromID(drugs []*Models.Drug) error {
 		}
 		results = append(results, BuildStitchNAtcStructFromDoc(doc).(StitchNAtcStruct))
 	}
-	//var drugArray []*Models.Drug
 
 	// Brute force results
-	nbHit := 0
 	fmt.Println("Got ", len(results), " results")
 	for _, r := range results {
-		fmt.Println("Looking for a drug with id ", r.Chemical)
-		for _, drug := range drugs {
-			fmt.Println("\tIs this one good ? => ", drug.STITCH_ID_ATC)
-			if drug.STITCH_ID_ATC == r.Chemical {
-				fmt.Println("\t\tYes it is !")
-				drug.Name = r.ATCLabel
-				nbHit++
-				break
-			}
+		if drug.STITCH_ID_ATC == r.Chemical {
+			fmt.Println("\t\tMatch !")
+			drug.Name = r.ATCLabel
+			break
 		}
 	}
-
-	fmt.Println("Nombre de hit ", nbHit, " / ", len(drugs))
 
 	// for _, r := range results {
 	// 	drug := Models.Drug{

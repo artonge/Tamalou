@@ -20,7 +20,7 @@ func indexStitchNAtc() error {
 	}
 	// Open the tsv file
 	// file, err := os.Open("/media/carl/DATA/Downloads/chemical.sources.v5.0.tsv/chemical.sources.v5.0.tsv")
-	file, err := os.Open("datas/chemical.sources.v5.0.tsv")
+	file, err := os.Open("../datas/chemical.sources.v5.0.tsv")
 	if err != nil {
 		return fmt.Errorf("Error in Stitch&ATC's connector init\n	Error	==> %v", err)
 	}
@@ -67,7 +67,7 @@ func nextTerm(reader *bufio.Reader, dicStitch map[string]StitchNAtcStruct) (*Sti
 }
 
 func parseKeg() (map[string]StitchNAtcStruct, error) {
-	file, err := os.Open("datas/br08303.keg")
+	file, err := os.Open("../datas/br08303.keg")
 	if err != nil {
 		return nil, err
 	}

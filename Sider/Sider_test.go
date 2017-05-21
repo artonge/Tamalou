@@ -7,16 +7,27 @@ import (
 	"github.com/artonge/Tamalou/Queries"
 )
 
-var rawQuery = "Abdominal pain OR Gastrointestinal pain AND anorexia"
+var rawQuery = "Abdominal pain OR Gastrointestinal pain AND anorexia" //  AND Alopecia OR Decreased appetite OR Anxiety
 
-func TestQueryMeddraStr(t *testing.T) {
+// func BenchmarkSplitJoinQueries(b *testing.B) {
+// 	fmt.Println("Benchmarking sider split queries")
+// 	results, err := QueryMeddraStr(rawQuery)
+// 	fmt.Println("Got ", len(results), " results")
+// 	if err != nil {
+// 		fmt.Println("Error in Sider Test : \n	==>", err, "\n	==>", results)
+// 		b.Fail()
+// 	}
+// 	JoinQueries(SplitQueries(results, 10))
+// }
 
-	results, err := QueryMeddraStr(rawQuery)
-	if err != nil {
-		fmt.Println("Error in Sider Test : \n	==>", err, "\n	==>", results)
-		t.Fail()
-	}
-}
+// func TestQueryMeddraStr(t *testing.T) {
+//
+// 	results, err := QueryMeddraStr(rawQuery)
+// 	if err != nil {
+// 		fmt.Println("Error in Sider Test : \n	==>", err, "\n	==>", results)
+// 		t.Fail()
+// 	}
+// }
 
 func TestQueryMeddraTree(t *testing.T) {
 
@@ -34,43 +45,16 @@ func TestQueryMeddraTree(t *testing.T) {
 		t.Fail()
 	}
 
-	// for index, result := range results {
-	// 	fmt.Println("Result: ", index, " =>> ", result.StitchCompoundId)
+	// for _, value := range results {
+	// 	fmt.Println("Stitch compound id =>>", value.StitchCompoundId)
+	// for _, se := range value.SideEffects {
+	// 	fmt.Println("\tSide Effect :")
+	// 	fmt.Println("\t\tName =>>", se.SideEffectName)
+	// 	fmt.Println("\t\tPlacebo =>>", se.Placebo)
+	// 	fmt.Println("\t\tFrequency =>>", se.Frequency)
+	// 	fmt.Println("\t\tFrequency Lower =>>", se.FrequencyLowerBound)
+	// 	fmt.Println("\t\tFrequency Upper=>>", se.FrequencyUpperBound)
+	// 	fmt.Println("\t\tMatched =>>", se.Matched)
+	// }
 	// }
 }
-
-// func TestQueryMeddraAllIndications(t *testing.T) {
-//
-// 	results, err := QueryMeddraAllIndications(Queries.DBQuery{
-// 		"1": 1,
-// 	})
-//
-// 	if err != nil {
-// 		fmt.Println("Error in Sider Test : \n	==>", err, "\n	==>", results)
-// 		t.Fail()
-// 	}
-// }
-
-// func TestQueryMeddraAllSe(t *testing.T) {
-//
-// 	results, err := QuerySideEffects(Queries.ParseQuery("Anaemia"))
-//
-// 	if err != nil {
-// 		fmt.Println("Error in Sider Test:\n	==> ", err, "\n	==> ", results)
-// 		t.Fail()
-// 	}
-//
-// 	fmt.Println("Results: ", len(results))
-// }
-
-// func TestQueryMeddraFreq(t *testing.T) {
-//
-// 	results, err := QueryMeddraFreq(Queries.DBQuery{
-// 		"1": 1,
-// 	})
-//
-// 	if err != nil {
-// 		fmt.Println("Error in Sider Test : \n	==>", err, "\n	==>", results)
-// 		t.Fail()
-// 	}
-// }

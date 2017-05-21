@@ -1,20 +1,17 @@
 package Queries
 
-import (
-	"fmt"
-	"strings"
-)
+import "strings"
 
 func GetClinicalSigns(rawQuery string) []string {
 	var replacer = strings.NewReplacer("OR", ",", "AND", ",")
 	formattedQuery := replacer.Replace(rawQuery)
-	fmt.Println(formattedQuery)
 	splitQuery := strings.Split(formattedQuery, ",")
-	fmt.Println(splitQuery)
 
-	for index, value := range splitQuery {
-		fmt.Println("Clinical sign number ", index, " is =>>", value)
+	for _, value := range splitQuery {
+		value = strings.TrimLeft(value, " ")
+		value = strings.TrimRight(value, " ")
 	}
+
 	return splitQuery
 }
 

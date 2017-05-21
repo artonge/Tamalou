@@ -16,28 +16,6 @@ func (me StitchNAtcStruct) GetID() string {
 	return me.ATCCode
 }
 
-type KegDocument struct {
-	Name string
-	ID   string
-}
-
-func (doc KegDocument) GetID() string {
-	return doc.ID
-}
-
-func BuildKegStructFromDoc(doc *document.Document) indexing.Indexable {
-	var kegItem KegDocument
-	for _, field := range doc.Fields {
-		switch field.Name() {
-		case "ID":
-			kegItem.ID = string(field.Value())
-		case "Name":
-			kegItem.Name = string(field.Value())
-		}
-	}
-	return nil
-}
-
 func BuildStitchNAtcStructFromDoc(doc *document.Document) indexing.Indexable {
 	var sitchItem StitchNAtcStruct
 	for _, field := range doc.Fields {
@@ -52,5 +30,5 @@ func BuildStitchNAtcStructFromDoc(doc *document.Document) indexing.Indexable {
 			sitchItem.Alias = string(field.Value())
 		}
 	}
-	return nil
+	return sitchItem
 }

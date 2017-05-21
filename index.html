@@ -24,9 +24,9 @@
       global_results.diseases.sort(function(r1, r2) {
         return r2.score - r1.score
       })
-      global_results.drugs.sort(function(d1, d2) {
-        return d2.score - d1.score
-      })
+      // global_results.drugs.sort(function(d1, d2) {
+      //   return d2.score - d1.score
+      // })
       clearResultsContainer()
       displayResults(global_results)
     }
@@ -39,9 +39,9 @@
       }
 
       var drugsContainer = document.getElementById("drugs-container")
-      drugsContainer.innerHTML += "<tr><th>Name</th><th>Score</th><th>Sources</th></tr>"
+      drugsContainer.innerHTML += "<tr><th>Name</th><th>Id</th></tr>"
       for (let d of results.drugs) {
-        drugsContainer.innerHTML += `<tr><td>${d.name}</td><td>${d.score}</td><td>${d.sources}</td></tr>`
+        drugsContainer.innerHTML += `<tr><td>${d.name}</td><td>${d.id}</td></tr>`
       }
     }
 

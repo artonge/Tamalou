@@ -15,7 +15,7 @@ type (
 	Drug struct {
 		Name            string `json:"name"`
 		CUI             string
-		STITCH_ID_SIDER string
+		STITCH_ID_SIDER string `json:"id"`
 		STITCH_ID_ATC   string
 		SideEffects     []*SideEffect
 	}

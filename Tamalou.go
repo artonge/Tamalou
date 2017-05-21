@@ -6,6 +6,7 @@ import (
 	"github.com/artonge/Tamalou/Omim"
 	"github.com/artonge/Tamalou/Orpha"
 	"github.com/artonge/Tamalou/Queries"
+	"github.com/artonge/Tamalou/Sider"
 )
 
 func main() {
@@ -65,6 +66,10 @@ func fetchDiseases(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 func fetchDrugs(query Queries.ITamalouQuery) ([]*Models.Drug, error) {
 	// Fetch drugs
 	results := make([]*Models.Drug, 0)
+
+	drugs := sider.QueryMeddraTree(query)
+
+	// Should call indexes and get drugs names before putting it in results
 
 	return results, nil
 }

@@ -13,8 +13,19 @@ type (
 
 	// Drug - Global drug structure
 	Drug struct {
-		Name string `json:"name"`
-		CUI  string
+		Name        string `json:"name"`
+		CUI         string
+		SideEffects []SideEffect
+	}
+
+	// SideEffect - Side effect of a drug
+	SideEffect struct {
+		SideEffectName      string
+		Placebo             string
+		Frequency           string
+		FrequencyLowerBound string
+		FrequencyUpperBound string
+		Matched             string
 	}
 
 	// Symptom - Global symptom structure

@@ -69,11 +69,10 @@ func GetChemicalFromID(drug *Models.Drug) error {
 	// Brute force results
 	fmt.Println("Got ", len(results), " results")
 	for _, r := range results {
-			if drug.STITCH_ID_ATC == r.Chemical {
-				fmt.Println("\t\tMatch !")
-				drug.Name = r.ATCLabel
-				break
-			}
+		if drug.STITCH_ID_ATC == r.Chemical {
+			fmt.Println("\t\tMatch !")
+			drug.Name = r.ATCLabel
+			break
 		}
 	}
 

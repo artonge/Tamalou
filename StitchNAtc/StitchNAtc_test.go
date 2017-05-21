@@ -14,7 +14,7 @@ func TestStitchNAtc(t *testing.T) {
 	drug.STITCH_ID_SIDER = "CID125880656"
 	//stitchIDs := []string{"CID100000085"}
 	drugArray = append(drugArray, drug)
-	err := GetChemicalFromID(drugArray)
+	err := GetChemicalsFromIds(drugArray)
 	if err != nil {
 		log.Fatal(err)
 	}

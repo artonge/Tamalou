@@ -42,8 +42,12 @@ func StitchIdSider2ATC(str string) string {
 
 func GetChemicalsFromIds(drugs []*Models.Drug) error {
 	for _, drug := range drugs {
-		GetChemicalFromID(drug)
+		err := GetChemicalFromID(drug)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 func GetChemicalFromID(drug *Models.Drug) error {

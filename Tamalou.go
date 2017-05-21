@@ -71,7 +71,7 @@ func fetchDrugs(query Queries.ITamalouQuery) ([]*Models.Drug, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Error while querying sider (meddra): %v", err)
 	}
-	stitchnatc.GetChemicalFromID(drugs)
+	stitchnatc.GetChemicalsFromIds(drugs)
 
 	return drugs, nil
 }

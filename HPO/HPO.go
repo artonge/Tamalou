@@ -11,18 +11,29 @@ import (
 
 var index bleve.Index
 
+// Open the index on startup
 func init() {
+	var err error
+	index, err = indexing.OpenIndex("obo-search.bleve")
+	if err != nil {
+		fmt.Println("Error while initing obo index:\n	Error ==> ", err)
+	}
+}
+
+// IndexHPO - build the index
+func IndexHPO() error {
 	var err error
 	fmt.Println("Indexing obo...")
 	index, err = indexing.InitIndex("obo-search.bleve")
 	if err != nil {
-		fmt.Println("Error while initing obo index:\n	Error ==> ", err)
+		return fmt.Errorf("Error while initing obo index:\n	Error ==> %v", err)
 	}
 	err = indexOBO()
 	if err != nil {
-		fmt.Println("Error while indexing obo:\n	Error ==> ", err)
+		return fmt.Errorf("Error while indexing obo:\n	Error ==> %v", err)
 	}
 	fmt.Println("Obo index done")
+	return nil
 }
 
 // QueryHPO - Return array of diseases from the HPO databases

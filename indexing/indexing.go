@@ -12,18 +12,10 @@ import (
 
 // InitIndex -
 func InitIndex(indexFile string) (bleve.Index, error) {
-	// Get path of the index file
-	pwd, err := os.Getwd()
+	err := removeIndex(indexFile)
 	if err != nil {
-		return nil, fmt.Errorf("Error while getting current working directory:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
+		return nil, fmt.Errorf("Error while deleting old index:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
 	}
-
-	// Remove the old index
-	err = os.RemoveAll(pwd + "/" + indexFile)
-	if err != nil {
-		return nil, fmt.Errorf("Error while removing old index:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
-	}
-
 	// Create a nex index file
 	mapping := bleve.NewIndexMapping()
 	index, err := bleve.New(indexFile, mapping)
@@ -31,6 +23,35 @@ func InitIndex(indexFile string) (bleve.Index, error) {
 		return nil, fmt.Errorf("Error while creating a new index:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
 	}
 	return index, nil
+}
+
+func removeIndex(indexFile string) error {
+	// Get path of the index file
+	pwd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("Error while getting current working directory:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
+	}
+
+	// Remove the old index
+	err = os.RemoveAll(pwd + "/" + indexFile)
+	if err != nil {
+		return fmt.Errorf("Error while removing old index:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
+	}
+
+	return nil
+}
+
+// OpenIndex -
+func OpenIndex(indexFile string) (bleve.Index, error) {
+	index, err := bleve.Open(indexFile)
+	if err == bleve.ErrorIndexPathDoesNotExist {
+		index, err = InitIndex(indexFile)
+		if err != nil {
+			return nil, fmt.Errorf("Error while initing index file:\n	Index file ==> %v\n	Error ==> %v", indexFile, err)
+		}
+	}
+
+	return index, err
 }
 
 // IndexDocs - index some Docs

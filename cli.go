@@ -1,19 +1,62 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
+	"github.com/artonge/Tamalou/HPO"
+	"github.com/artonge/Tamalou/Omim"
 	"github.com/artonge/Tamalou/Queries"
+	stitchnatc "github.com/artonge/Tamalou/StitchNAtc"
 	"github.com/mkideal/cli"
 )
 
-type argT struct {
-	cli.Helper
-	Query string `cli:"q,query" usage:"ventre AND tete OR hand"`
+func startCLI() {
+	if err := cli.Root(tamalouCMD,
+		cli.Tree(help),
+		cli.Tree(requestCMD),
+		cli.Tree(indexCMD),
+		cli.Tree(serverCMD),
+	).Run(os.Args[1:]); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }
 
-func startCLI() {
-	cli.Run(new(argT), func(ctx *cli.Context) error {
-		argv := ctx.Argv().(*argT)
-		query := Queries.ParseQuery(argv.Query)
+var help = cli.HelpCommand("display help information")
+
+// root command
+type tamalouCMDT struct {
+	cli.Helper
+	Name string `cli:"tamalou" usage:"[index, request]"`
+}
+
+var tamalouCMD = &cli.Command{
+	Desc: "this is tamalou root command",
+	// Argv is a factory function of argument object
+	// ctx.Argv() is if Command.Argv == nil or Command.Argv() is nil
+	Argv: func() interface{} { return new(tamalouCMDT) },
+	Fn: func(ctx *cli.Context) error {
+		argv := ctx.Argv().(*tamalouCMDT)
+		ctx.String("Hello, root command, I am %s\n", argv.Name)
+		return nil
+	},
+}
+
+// child command
+type requestCMDT struct {
+	cli.Helper
+	Name string `cli:"request" usage:"symptom1 AND sumptom2 OR symptom3"`
+}
+
+var requestCMD = &cli.Command{
+	Name: "request",
+	Desc: "this is the request command",
+	Argv: func() interface{} { return new(requestCMDT) },
+	Fn: func(ctx *cli.Context) error {
+		argv := ctx.Args()
+		fmt.Println(argv)
+		query := Queries.ParseQuery(argv[0])
 
 		diseases, err := fetchDiseases(query)
 		if err != nil {
@@ -33,7 +76,49 @@ func startCLI() {
 		for _, d := range drugs {
 			ctx.String("	- %v\n", d.Name)
 		}
-
 		return nil
-	})
+	},
+}
+
+// child command
+type indexCMDT struct {
+	cli.Helper
+	Name string `cli:"index" usage:"symptom1 AND sumptom2 OR symptom3"`
+}
+
+var indexCMD = &cli.Command{
+	Name: "index",
+	Desc: "this is the index command",
+	Argv: func() interface{} { return new(indexCMDT) },
+	Fn: func(ctx *cli.Context) error {
+		err := HPO.IndexHPO()
+		if err != nil {
+			ctx.String("Error:\n	%v\n", err)
+		}
+		err = Omim.IndexOmim()
+		if err != nil {
+			ctx.String("Error:\n	%v\n", err)
+		}
+		err = stitchnatc.IndexStitchNAtc()
+		if err != nil {
+			ctx.String("Error:\n	%v\n", err)
+		}
+		return nil
+	},
+}
+
+// child command
+type serverCMDT struct {
+	cli.Helper
+	Name string `cli:"server" usage:"symptom1 AND sumptom2 OR symptom3"`
+}
+
+var serverCMD = &cli.Command{
+	Name: "server",
+	Desc: "this is the server command",
+	Argv: func() interface{} { return new(serverCMDT) },
+	Fn: func(ctx *cli.Context) error {
+		startServer()
+		return nil
+	},
 }

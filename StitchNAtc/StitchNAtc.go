@@ -2,7 +2,6 @@ package stitchnatc
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/artonge/Tamalou/Models"
 	"github.com/artonge/Tamalou/Queries"
@@ -12,21 +11,29 @@ import (
 
 var index bleve.Index
 
+// Open the index on startup
 func init() {
-	fmt.Println("Indexing stitch & atc file...")
-	pwd, err := os.Getwd()
+	var err error
+	index, err = indexing.OpenIndex("stitchnatc-search.bleve")
 	if err != nil {
-		fmt.Println("Error while getting current working directory:\n Error ==> ", err, pwd)
+		fmt.Println("Error while initing stitchnatc index:\n	Error ==> ", err)
 	}
-	err = os.RemoveAll(pwd + "/stitchnatc-search.bleve")
+}
+
+// IndexStitchNAtc -
+func IndexStitchNAtc() error {
+	var err error
+	fmt.Println("Indexing stitch & atc file...")
+	index, err = indexing.InitIndex("stitchnatc-search.bleve")
 	if err != nil {
-		fmt.Println("Error while removing old stitch & atc index:\n Error ==> ", err)
+		return fmt.Errorf("Error while initing stitchnatc index:\n	Error ==> %v", err)
 	}
 	index, err = indexStitchNAtc()
 	if err != nil {
-		fmt.Println("Error while indexing stitch & atc file:\n Error ==> ", err)
+		return fmt.Errorf("Error while indexing stitch & atc file:\n Error ==> %v", err)
 	}
 	fmt.Println("stitch & atc file indexed.")
+	return nil
 }
 
 func StitchIdSider2ATC(str string) string {

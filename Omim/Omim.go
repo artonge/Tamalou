@@ -11,19 +11,30 @@ import (
 
 var index bleve.Index
 
+// Open the index on startup
 func init() {
+	var err error
+	index, err = indexing.OpenIndex("omim-search.bleve")
+	if err != nil {
+		fmt.Println("Error while initing omim index:\n	Error ==> ", err)
+	}
+}
+
+// IndexOmim - build the index
+func IndexOmim() error {
 	var err error
 	fmt.Println("Indexing omim...")
 	index, err = indexing.InitIndex("omim-search.bleve")
 	if err != nil {
-		fmt.Println("Error while initing omim index:\n	Error ==> ", err)
+		return fmt.Errorf("Error while initing omim index:\n	Error ==> %v", err)
 	}
 
 	err = indexOmim()
 	if err != nil {
-		fmt.Println("Error while indexing omim's csv:\n	Error ==> ", err)
+		return fmt.Errorf("Error while indexing omim's csv:\n	Error ==> %v", err)
 	}
 	fmt.Println("Omim index done")
+	return nil
 }
 
 // DiseasesFromIDs -

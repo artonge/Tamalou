@@ -15,8 +15,9 @@ import (
 
 var db *sql.DB
 
-//var dbPath = "gmd-read:esial@tcp(neptune.telecomnancy.univ-lorraine.fr:3306)/gmd"
-var dbPath = "root:root@tcp(localhost:3306)/sider"
+var dbPath = "gmd-read:esial@tcp(neptune.telecomnancy.univ-lorraine.fr:3306)/gmd"
+
+// var dbPath = "root:root@tcp(localhost:3306)/sider"
 var NbThread = 7
 
 // init DB Connection

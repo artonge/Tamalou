@@ -13,8 +13,7 @@ import (
 )
 
 func main() {
-	// startCLI()
-	startServer()
+	startCLI()
 }
 
 func fetchDiseases(query Queries.ITamalouQuery) ([]*Models.Disease, error) {

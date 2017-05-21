@@ -5,25 +5,29 @@ import (
 	"net/http"
 
 	"github.com/ant0ine/go-json-rest/rest"
+	"github.com/artonge/Tamalou/Models"
 	"github.com/artonge/Tamalou/Queries"
 )
 
 func request(w rest.ResponseWriter, r *rest.Request) {
+	// Build the query to an ITamalouQuery
 	rawQuery := r.FormValue("request")
 	query := Queries.ParseQuery(rawQuery)
 
+	// Prepare chanels
+	errorChanel := make(chan error, 1)
+	diseasesChanel := make(chan []*Models.Disease, 1)
+	// drugsChanel := make(chan []*Models.Drug, 1)
+
 	// Get diseases and drugs
-	diseases, err := fetchDiseases(query)
-	if err != nil {
-		w.WriteJson(err)
-	}
+	go fetchDiseases(query, diseasesChanel, errorChanel)
 	drugs, err := fetchDrugs(query)
 	if err != nil {
 		w.WriteJson(err)
 	}
 
 	w.WriteJson(map[string]interface{}{
-		"diseases": diseases,
+		"diseases": <-diseasesChanel,
 		"drugs":    drugs,
 	})
 }

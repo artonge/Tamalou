@@ -25,6 +25,13 @@ func init() {
 	fmt.Println("Obo index done")
 }
 
+// QueryHPOAsync - Return array of diseases from the HPO databases in channels
+func QueryHPOAsync(query Queries.ITamalouQuery, diseaseChanel chan []*Models.Disease, errorChanel chan error) {
+	diseasesArray, err := QueryHPO(query)
+	diseaseChanel <- diseasesArray
+	errorChanel <- err
+}
+
 // QueryHPO - Return array of diseases from the HPO databases
 func QueryHPO(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 	switch query.Type() {

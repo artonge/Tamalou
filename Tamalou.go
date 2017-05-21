@@ -13,27 +13,25 @@ func main() {
 	startServer()
 }
 
-func fetchDiseases(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
+func fetchDiseases(query Queries.ITamalouQuery, diseaseChanel chan []*Models.Disease, errorChanel chan error) {
+	orphaChanel := make(chan []*Models.Disease, 1)
+	omimChanel := make(chan []*Models.Disease, 1)
+	hpoChanel := make(chan []*Models.Disease, 1)
+	omimFromHPOChanel := make(chan []*Models.Disease, 1)
+	orphaFromHPOChanel := make(chan []*Models.Disease, 1)
+
 	// Fetch diseases
 	// HPO
-	resultsHPO, err := HPO.QueryHPO(query)
-	if err != nil {
-		return nil, err
-	}
+	go HPO.QueryHPOAsync(query, hpoChanel, errorChanel)
 	// ORPHA
-	resultsOrpha, err := orpha.Query(query)
-	if err != nil {
-		return nil, err
-	}
+	go orpha.QueryAsync(query, orphaChanel, errorChanel)
 	// OMIM
-	resultsOMIM, err := Omim.QueryOmimIndex(query)
-	if err != nil {
-		return nil, err
-	}
+	go Omim.QueryOmimIndexAsync(query, omimChanel, errorChanel)
 	// Orpha and OMIM from HPO
 	var orphaIDs []float64
 	var omimIDs []string
-	for _, d := range resultsHPO {
+	resultHPO := <-hpoChanel
+	for _, d := range resultHPO {
 		if d.OMIMID != "" {
 			omimIDs = append(omimIDs, d.OMIMID)
 		}
@@ -41,25 +39,19 @@ func fetchDiseases(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 			orphaIDs = append(orphaIDs, d.OrphaID)
 		}
 	}
-	resultsOrphaFromHPO, err := orpha.GetDiseasesFromIDs(orphaIDs)
-	if err != nil {
-		return nil, err
-	}
-	resultsOMIMFromHPO, err := Omim.DiseasesFromIDs(omimIDs)
-	if err != nil {
-		return nil, err
-	}
+	go orpha.GetDiseasesFromIDsAsync(orphaIDs, orphaFromHPOChanel, errorChanel)
+	go Omim.DiseasesFromIDsAsync(omimIDs, omimFromHPOChanel, errorChanel)
 
 	results := make([]*Models.Disease, 0)
 	// Merge results
-	results = Models.Merge(results, resultsOrpha, "or")
-	results = Models.Merge(results, resultsHPO, "or")
-	results = Models.Merge(results, resultsOMIM, "or")
-	results = Models.Merge(results, resultsOrphaFromHPO, "or")
-	results = Models.Merge(results, resultsOMIMFromHPO, "or")
+	results = Models.Merge(results, <-orphaChanel, "or")
+	results = Models.Merge(results, resultHPO, "or")
+	results = Models.Merge(results, <-omimChanel, "or")
+	results = Models.Merge(results, <-orphaFromHPOChanel, "or")
+	results = Models.Merge(results, <-omimFromHPOChanel, "or")
 
 	// Return filtered results (remove double apparition)
-	return filterDiseases(results), nil
+	diseaseChanel <- filterDiseases(results)
 }
 
 func fetchDrugs(query Queries.ITamalouQuery) ([]*Models.Drug, error) {

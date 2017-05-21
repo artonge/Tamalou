@@ -26,6 +26,13 @@ func init() {
 	fmt.Println("Omim index done")
 }
 
+// DiseasesFromIDsAsync -
+func DiseasesFromIDsAsync(OMIMIDs []string, diseaseChanel chan []*Models.Disease, errorChanel chan error) {
+	diseasesArray, err := DiseasesFromIDs(OMIMIDs)
+	diseaseChanel <- diseasesArray
+	errorChanel <- err
+}
+
 // DiseasesFromIDs -
 func DiseasesFromIDs(OMIMIDs []string) ([]*Models.Disease, error) {
 	var idQueries []Queries.ITamalouQuery
@@ -41,6 +48,13 @@ func DiseasesFromIDs(OMIMIDs []string) ([]*Models.Disease, error) {
 	}
 
 	return results, nil
+}
+
+// QueryOmimIndexAsync -
+func QueryOmimIndexAsync(query Queries.ITamalouQuery, diseaseChanel chan []*Models.Disease, errorChanel chan error) {
+	diseasesArray, err := QueryOmimIndex(query)
+	diseaseChanel <- diseasesArray
+	errorChanel <- err
 }
 
 // QueryOmimIndex -

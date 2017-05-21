@@ -5,15 +5,27 @@ import (
 	"log"
 	"testing"
 
+	"github.com/artonge/Tamalou/Models"
 	"github.com/artonge/Tamalou/Queries"
-	"github.com/artonge/Tamalou/indexing"
 )
 
 func TestOmimSearchQuery(t *testing.T) {
-	tquery := Queries.ParseQuery("head")
-	results, err := indexing.QueryIndex(index, tquery, buildOmimStructFromDoc)
+	results, err := QueryOmimIndex(Queries.ParseQuery("head"))
 	if err != nil {
+		fmt.Println(results)
 		log.Fatal(err)
 	}
-	fmt.Println(results[0].(omimStruct))
+}
+
+func TestOmimSearchQueryAsync(t *testing.T) {
+	diseasesChanel := make(chan []*Models.Disease)
+	errorChanel := make(chan error)
+	go QueryOmimIndexAsync(Queries.ParseQuery("head"), diseasesChanel, errorChanel)
+
+	diseases, err := <-diseasesChanel, <-errorChanel
+
+	if err != nil {
+		fmt.Println(diseases, err)
+		t.Fail()
+	}
 }

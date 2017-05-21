@@ -30,8 +30,16 @@ func init() {
 	db = conn.SelectDB("orphadatabase", nil)
 }
 
-// Query - Fetch all diceases for the given ITamalouQuery
-func Query(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
+// QueryAsync - Fetch all diceases for the given ITamalouQuery
+// Put the results in channels
+func QueryAsync(query Queries.ITamalouQuery, diseaseChanel chan []*Models.Disease, errorChanel chan error) {
+	diseasesArray, err := QueryOrpha(query)
+	diseaseChanel <- diseasesArray
+	errorChanel <- err
+}
+
+// QueryOrpha - Fetch all diceases for the given ITamalouQuery
+func QueryOrpha(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 	switch query.Type() {
 	case "or":
 	case "and":
@@ -39,7 +47,7 @@ func Query(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 		// Merge the results in order to only have the diseases shared by all clinicalSigns
 		var results []*Models.Disease
 		for _, child := range query.Children() {
-			subResults, err := Query(child)
+			subResults, err := QueryOrpha(child)
 			if err != nil {
 				return nil, err
 			}
@@ -102,6 +110,15 @@ func getDiseaseByClinicalSign(clinicalSign string) ([]*Models.Disease, error) {
 	}
 
 	return diseasesArray, err
+}
+
+// GetDiseasesFromIDsAsync - Interface to the'getDisease' view of the DB
+// Return the diseases informations from their IDs
+// Put the results in channels
+func GetDiseasesFromIDsAsync(diseasesIDs []float64, diseaseChanel chan []*Models.Disease, errorChanel chan error) {
+	diseasesArray, err := GetDiseasesFromIDs(diseasesIDs)
+	diseaseChanel <- diseasesArray
+	errorChanel <- err
 }
 
 // GetDiseasesFromIDs - Interface to the'getDisease' view of the DB

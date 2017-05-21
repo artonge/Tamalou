@@ -39,6 +39,7 @@ func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
 	batch := index.NewBatch()
 	batchCount := 100
 	// Loop through the Docs with a custom passed function (nextDoc)
+	nbDone := 0
 	for {
 		doc, err := nextDoc()
 		if err != nil {
@@ -57,7 +58,7 @@ func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
 		// Decrement batchCount
 		batchCount--
 
-		// I batch is full, write it to the index
+		// If batch is full, write it to the index
 		if batchCount == 0 {
 			err = index.Batch(batch)
 			if err != nil {
@@ -68,10 +69,16 @@ func IndexDocs(index bleve.Index, nextDoc func() (Indexable, error)) error {
 			batchCount = 100
 
 			// REMOVE - This stops the indexing at 100 Docs !!
-			fmt.Println("REMOVE ME")
-			return nil
+			//fmt.Println("REMOVE ME")
+			//return nil
+		}
+
+		nbDone++
+		if nbDone%100 == 0 {
+			fmt.Println("Done :", nbDone)
 		}
 	}
+	fmt.Println("Over")
 
 	// flush the last batch
 	if batchCount > 0 {

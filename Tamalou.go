@@ -1,12 +1,15 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/artonge/Tamalou/HPO"
 	"github.com/artonge/Tamalou/Models"
 	"github.com/artonge/Tamalou/Omim"
 	"github.com/artonge/Tamalou/Orpha"
 	"github.com/artonge/Tamalou/Queries"
-	"github.com/artonge/Tamalou/Sider"
+	sider "github.com/artonge/Tamalou/Sider"
+	"github.com/artonge/Tamalou/StitchNAtc"
 )
 
 func main() {
@@ -65,13 +68,15 @@ func fetchDiseases(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 
 func fetchDrugs(query Queries.ITamalouQuery) ([]*Models.Drug, error) {
 	// Fetch drugs
-	results := make([]*Models.Drug, 0)
-
-	drugs := sider.QueryMeddraTree(query)
+	drugs, err := sider.QueryMeddraTree(query)
+	if err != nil {
+		return nil, fmt.Errorf("Error while querying sider (meddra): %v", err)
+	}
+	stitchnatc.GetChemicalFromID(drugs)
 
 	// Should call indexes and get drugs names before putting it in results
 
-	return results, nil
+	return drugs, nil
 }
 
 func filterDiseases(diseaseArray []*Models.Disease) []*Models.Disease {

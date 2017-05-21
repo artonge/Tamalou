@@ -13,9 +13,11 @@ type (
 
 	// Drug - Global drug structure
 	Drug struct {
-		Name        string `json:"name"`
-		CUI         string
-		SideEffects []SideEffect
+		Name            string `json:"name"`
+		CUI             string
+		STITCH_ID_SIDER string
+		STITCH_ID_ATC   string
+		SideEffects     []*SideEffect
 	}
 
 	// SideEffect - Side effect of a drug

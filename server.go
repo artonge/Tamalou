@@ -44,5 +44,5 @@ func startServer() {
 
 	http.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("."))))
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8081", nil))
 }

@@ -15,10 +15,11 @@ import (
 
 var db *sql.DB
 
-var dbPath = "gmd-read:esial@tcp(neptune.telecomnancy.univ-lorraine.fr:3306)/gmd"
+//var dbPath = "gmd-read:esial@tcp(neptune.telecomnancy.univ-lorraine.fr:3306)/gmd"
 
-// var dbPath = "root:root@tcp(localhost:3306)/sider"
+var dbPath = "root:root@tcp(localhost:3306)/sider"
 var NbThread = 7
+var clinicalSignsSql = ""
 
 // init DB Connection
 func init() {
@@ -58,7 +59,6 @@ func JoinQueries(buckets [][]*Models.Drug) []*Models.Drug {
 func QueryMeddraFreq(drugs []*Models.Drug, clinicalSigns []string) ([]*Models.Drug, error) {
 
 	// Build SQL string conditions based on clinical signs
-	var clinicalSignsSql = ""
 	for _, value := range clinicalSigns {
 		clinicalSignsSql += "WHEN meddra_freq.side_effect_name LIKE '" + value + "' THEN 1\n"
 	}
@@ -143,4 +143,28 @@ func Getdrugs(query string) ([]*Models.Drug, error) {
 		results = append(results, tmpMeddra)
 	}
 	return results, nil
+}
+
+func GetSideEffects(drugId string) ([]*Models.SideEffect, error) {
+	currentQuery := "SELECT DISTINCT(meddra_freq.side_effect_name), meddra_freq.placebo, meddra_freq.frequency_description, meddra_freq.freq_lower_bound, meddra_freq.freq_upper_bound, (CASE " + clinicalSignsSql
+	currentQuery += "ELSE 0 END) as matched FROM meddra_freq WHERE meddra_freq.stitch_compound_id1 = '" + drugId + "'"
+
+	// Start query
+	rows, err := db.Query(currentQuery)
+	if err != nil {
+		return nil, fmt.Errorf("Error while querying sider (meddra): %v", err)
+	}
+	defer rows.Close()
+
+	var sideEffects []*Models.SideEffect
+	// Retrieve results
+	for rows.Next() {
+		tmpMeddra := new(Models.SideEffect)
+		err := rows.Scan(&tmpMeddra.SideEffectName, &tmpMeddra.Placebo, &tmpMeddra.Frequency, &tmpMeddra.FrequencyLowerBound, &tmpMeddra.FrequencyUpperBound, &tmpMeddra.Matched)
+		if err != nil {
+			return sideEffects, err
+		}
+		sideEffects = append(sideEffects, tmpMeddra)
+	}
+	return sideEffects, nil
 }

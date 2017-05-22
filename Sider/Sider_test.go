@@ -32,13 +32,13 @@ var rawQuery = "Abdominal pain OR Gastrointestinal pain AND anorexia" //  AND Al
 func TestQueryMeddraTree(t *testing.T) {
 
 	tree := Queries.ParseQuery(rawQuery)
-	clinicalSigns := Queries.GetClinicalSigns(rawQuery)
+	//clinicalSigns := Queries.GetClinicalSigns(rawQuery)
 	results, err := QueryMeddraTree(tree)
 
 	fmt.Println("Got ", len(results), " results")
 
 	// Get frequency from all ids
-	results, err = QueryMeddraFreq(results, clinicalSigns)
+	//results, err = QueryMeddraFreq(results, clinicalSigns)
 
 	if err != nil {
 		fmt.Println("Error in Sider Test : \n	==>", err, "\n	==>", results)

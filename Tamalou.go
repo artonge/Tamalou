@@ -17,6 +17,7 @@ func main() {
 }
 
 func fetchDiseases(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
+	fmt.Println("Fetching diseases")
 	// Fetch diseases
 	// HPO
 	resultsHPO, err := HPO.QueryHPO(query)
@@ -62,17 +63,20 @@ func fetchDiseases(query Queries.ITamalouQuery) ([]*Models.Disease, error) {
 	results = Models.Merge(results, resultsOMIMFromHPO, "or")
 
 	// Return filtered results (remove double apparition)
+	fmt.Println("Diseased work done")
 	return filterDiseases(results), nil
 }
 
 func fetchDrugs(query Queries.ITamalouQuery) ([]*Models.Drug, error) {
 	// Fetch drugs
+	fmt.Println("Fetching drugs")
 	drugs, err := sider.QueryMeddraTree(query)
 	if err != nil {
 		return nil, fmt.Errorf("Error while querying sider (meddra): %v", err)
 	}
 	stitchnatc.GetChemicalsFromIds(drugs)
 
+	fmt.Println("Drugs work done")
 	return drugs, nil
 }
 

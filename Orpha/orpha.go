@@ -112,7 +112,7 @@ func GetDiseasesFromIDs(diseasesIDs []float64) ([]*Models.Disease, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Error while converting IDs array to json :\n	==>  %v", err)
 	}
-	params := url.Values{"keys": []string{string(IDList)}}
+	params := url.Values{"keys": []string{strings.Replace(fmt.Sprint(IDList), " ", ", ", -1)}}
 
 	// Make the request to couchDB
 	queryResults := viewResponse{}

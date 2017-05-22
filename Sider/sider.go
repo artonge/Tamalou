@@ -113,6 +113,7 @@ func ClinicalSignsFromCompoundId(drugs []*Models.Drug, clinicalSignsSQL string, 
 
 // QueryMeddra with parsed input string : a binary tree structure
 func QueryMeddraTree(query Queries.ITamalouQuery) ([]*Models.Drug, error) {
+	fmt.Println("Querying meddra")
 	fullQuery := Queries.BuildSiderQuery(" stitch_compound_id1 IN (SELECT stitch_compound_id1 FROM meddra_all_se WHERE side_effect_name LIKE", query)
 	return Getdrugs(fullQuery)
 }
@@ -125,6 +126,7 @@ func QueryMeddraStr(inputStr string) ([]*Models.Drug, error) {
 
 // Retrieve all compoundId's drugs returned by the query
 func Getdrugs(query string) ([]*Models.Drug, error) {
+	fmt.Println("Getting drugs")
 	rows, err := db.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("Error while querying sider (meddra): %v", err)

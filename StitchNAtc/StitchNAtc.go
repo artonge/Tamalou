@@ -41,12 +41,14 @@ func StitchIdSider2ATC(str string) string {
 }
 
 func GetChemicalsFromIds(drugs []*Models.Drug) error {
+	fmt.Println("Getting chemocal from IDs")
 	for _, drug := range drugs {
 		err := GetChemicalFromID(drug)
 		if err != nil {
 			return err
 		}
 	}
+	fmt.Println("Done getting chemocal from IDs")
 	return nil
 }
 

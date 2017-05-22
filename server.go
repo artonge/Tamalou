@@ -52,7 +52,7 @@ func startServer() {
 
 	router, err := rest.MakeRouter(
 		rest.Get("/request", request),
-		rest.Get("/sideeffect", getSideEffects),
+		rest.Get("/sideeffects", getSideEffects),
 	)
 	if err != nil {
 		log.Fatal(err)

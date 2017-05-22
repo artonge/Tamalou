@@ -41,23 +41,29 @@
       var drugsContainer = document.getElementById("drugs-container")
       drugsContainer.innerHTML += "<tr><th>Name</th><th>Id</th></tr>"
       for (let d of results.drugs) {
-        drugsContainer.innerHTML += `<tr onclick="getSideEffects(event, '${d.id}')"><td>${d.name}</td><td>${d.id}</td></tr>`
+        drugsContainer.innerHTML += `<tr onclick="getSideEffects(event, '${d.id}')"><td>${d.name}</td><td>${d.id}</td><td><table class="sideeffects-container"></table></td></tr>`
       }
     }
 
     function getSideEffects(event, id) {
+      var SEcontainer = event.currentTarget.getElementsByClassName('sideeffects-container')[0]
+      console.log(SEcontainer)
+      if (SEcontainer.innerHTML != "") {
+        SEcontainer.innerHTML = ""
+        return
+      }
       fetch("http://localhost:8080/api/sideeffects?drugID="+id)
       .then(function(result) {
         return result.json()
       })
       .then(function(result) {
-        var html = "<table>"
+        var html = ""
         html += "<tr><th>Name</th><th>Placebo</th><th>Freq</th><th>FreqUpper</th><th>FreqLower</th></tr>"
         for (let sideeffect of result.sideeffects) {
           html += `<tr><td>${sideeffect.name}</td><td>${sideeffect.placebo}</td><td>${sideeffect.freq}</td><td>${sideeffect.frequpper}</td><td>${sideeffect.freqlower}</td></tr>`
         }
-        html += "</table>"
-        event.target.innerHTML = html
+        console.log(SEcontainer)
+        SEcontainer.innerHTML = html
       })
     }
 

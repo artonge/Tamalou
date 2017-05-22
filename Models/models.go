@@ -17,17 +17,17 @@ type (
 		CUI             string
 		STITCH_ID_SIDER string `json:"id"`
 		STITCH_ID_ATC   string
-		SideEffects     []*SideEffect `json:sideEffects`
+		SideEffects     []*SideEffect `json:"sideEffects"`
 	}
 
 	// SideEffect - Side effect of a drug
 	SideEffect struct {
-		SideEffectName      string `json:name`
-		Placebo             string `json:placebo`
-		Frequency           string `json:freq`
-		FrequencyLowerBound string `json:freqlower`
-		FrequencyUpperBound string `json:frequpper`
-		Matched             string `json:matched`
+		SideEffectName      string `json:"name"`
+		Placebo             string `json:"placebo"`
+		Frequency           string `json:"freq"`
+		FrequencyLowerBound string `json:"freqlower"`
+		FrequencyUpperBound string `json:"frequpper"`
+		Matched             string `json:"matched"`
 	}
 
 	// Symptom - Global symptom structure

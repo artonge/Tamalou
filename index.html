@@ -41,7 +41,7 @@
       var drugsContainer = document.getElementById("drugs-container")
       drugsContainer.innerHTML += "<tr><th>Name</th><th>Id</th></tr>"
       for (let d of results.drugs) {
-        drugsContainer.innerHTML += `<tr><td>${d.name}</td><td>${d.id}</td></tr>`
+        drugsContainer.innerHTML += `<tr onclick="getSideEffects(${d.id})"><td>${d.name}</td><td>${d.id}</td></tr>`
       }
     }
 

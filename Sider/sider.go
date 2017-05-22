@@ -146,9 +146,10 @@ func Getdrugs(query string) ([]*Models.Drug, error) {
 }
 
 func GetSideEffects(drugId string) ([]*Models.SideEffect, error) {
-	currentQuery := "SELECT DISTINCT(meddra_freq.side_effect_name), meddra_freq.placebo, meddra_freq.frequency_description, meddra_freq.freq_lower_bound, meddra_freq.freq_upper_bound, (CASE " + clinicalSignsSql
-	currentQuery += "ELSE 0 END) as matched FROM meddra_freq WHERE meddra_freq.stitch_compound_id1 = '" + drugId + "'"
+	currentQuery := "SELECT DISTINCT(meddra_freq.side_effect_name), meddra_freq.placebo, meddra_freq.frequency_description, meddra_freq.freq_lower_bound, meddra_freq.freq_upper_bound"
+	currentQuery += " FROM meddra_freq WHERE meddra_freq.stitch_compound_id1 = '" + drugId + "'"
 
+	fmt.Println("Full query : ", currentQuery)
 	// Start query
 	rows, err := db.Query(currentQuery)
 	if err != nil {
@@ -160,9 +161,10 @@ func GetSideEffects(drugId string) ([]*Models.SideEffect, error) {
 	// Retrieve results
 	for rows.Next() {
 		tmpMeddra := new(Models.SideEffect)
-		err := rows.Scan(&tmpMeddra.SideEffectName, &tmpMeddra.Placebo, &tmpMeddra.Frequency, &tmpMeddra.FrequencyLowerBound, &tmpMeddra.FrequencyUpperBound, &tmpMeddra.Matched)
+		err := rows.Scan(&tmpMeddra.SideEffectName, &tmpMeddra.Placebo, &tmpMeddra.Frequency, &tmpMeddra.FrequencyLowerBound, &tmpMeddra.FrequencyUpperBound)
 		if err != nil {
-			return sideEffects, err
+			fmt.Println("Error here")
+			return nil, err
 		}
 		sideEffects = append(sideEffects, tmpMeddra)
 	}
